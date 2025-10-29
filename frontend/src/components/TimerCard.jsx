@@ -43,10 +43,126 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
     // Cleanup function - runs when component unmounts or isActive changes
     return () => clearInterval(interval);
   }, [isActive]);
+
+    // Handle Start button click
+  const handleStart = async () => {
+    try {
+      const newSession = await startSession(category);
+      setSession(newSession);
+      setIsActive(true);
+      onSessionUpdate(); // Notify parent to refresh data
+    } catch (error) {
+      alert('Failed to start session');
+    }
+  };
+
+  // Handle Pause button click
+  const handlePause = async () => {
+    try {
+      const updatedSession = await pauseSession(session.id);
+      setSession(updatedSession);
+      setDuration(updatedSession.duration);
+      setIsActive(false);
+      onSessionUpdate();
+    } catch (error) {
+      alert('Failed to pause session');
+    }
+  };
+
+  // Handle Resume button click
+  const handleResume = async () => {
+    try {
+      const updatedSession = await resumeSession(session.id);
+      setSession(updatedSession);
+      setIsActive(true);
+      onSessionUpdate();
+    } catch (error) {
+      alert('Failed to resume session');
+    }
+  };
+
+  // Handle Stop button click
+  const handleStop = async () => {
+    try {
+      await stopSession(session.id);
+      setSession(null);
+      setDuration(0);
+      setIsActive(false);
+      onSessionUpdate();
+    } catch (error) {
+      alert('Failed to stop session');
+    }
+  };
   
-  return (
-    <div>TimerCard for {category}</div>
-  );
+    return (
+        <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+        {/* Category Title */}
+        <h3 className="text-xl font-bold text-gray-800 mb-4">{category}</h3>
+        
+        {/* Timer Display */}
+        <div className="text-4xl font-mono font-bold text-center mb-6 text-gray-700">
+            {formatTime(duration)}
+        </div>
+        
+        {/* Buttons */}
+        <div className="flex gap-2 justify-center">
+            {!session ? (
+            // No session - show Start button
+            <button
+                onClick={handleStart}
+                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+            >
+                Start
+            </button>
+            ) : isActive ? (
+            // Session is active - show Pause and Stop buttons
+            <>
+                <button
+                onClick={handlePause}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                >
+                Pause
+                </button>
+                <button
+                onClick={handleStop}
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                >
+                Stop
+                </button>
+            </>
+            ) : (
+            // Session is paused - show Resume and Stop buttons
+            <>
+                <button
+                onClick={handleResume}
+                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                >
+                Resume
+                </button>
+                <button
+                onClick={handleStop}
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+                >
+                Stop
+                </button>
+            </>
+            )}
+        </div>
+        
+        {/* Session Status Indicator */}
+        {session && (
+            <div className="mt-4 text-center">
+            <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                isActive ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+            }`}>
+                {isActive ? 'Active' : 'Paused'}
+            </span>
+            </div>
+        )}
+        </div>
+    );
+
+
 };
 
 export default TimerCard;

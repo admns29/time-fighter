@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Base URL for our API (Vite proxy will forward /api to http://localhost:8080/api)
+// Base URL for API (Vite proxy will forward /api to http://localhost:8080/api)
 const API_BASE_URL = '/api/sessions';
 
 // Start a new session
