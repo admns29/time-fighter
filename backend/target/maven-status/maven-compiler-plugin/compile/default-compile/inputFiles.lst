@@ -1,1 +1,5 @@
 /mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/TimeFighterApp.java
+/mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/controller/SessionController.java
+/mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/model/Session.java
+/mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/repository/SessionRepository.java
+/mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/service/SessionService.java
