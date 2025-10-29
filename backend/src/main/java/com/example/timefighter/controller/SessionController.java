@@ -31,6 +31,11 @@ public class SessionController {
         return sessionService.startSession(request);
     }
 
+    @GetMapping("/current")
+    public SessionResponseDTO getCurrentSession() {
+        return sessionService.getCurrentSession();
+    }
+
     @PutMapping("/{id}/pause")
     public SessionResponseDTO pauseSession(@PathVariable Long id) {
         return sessionService.pauseSession(id);

@@ -62,17 +62,16 @@ export const getAllSessions = async () => {
   }
 };
 
-// Get the currently active session (if any)
-export const getActiveSession = async () => {
+// Get the current session (active or paused)
+export const getCurrentSession = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/active`);
+    const response = await axios.get(`${API_BASE_URL}/current`);
     return response.data;
   } catch (error) {
-    // No active session is not an error, return null
     if (error.response?.status === 404) {
       return null;
     }
-    console.error('Error fetching active session:', error);
-    throw error;
+    console.error('Error fetching current session:', error);
+    return null; // Return null instead of throwing
   }
 };

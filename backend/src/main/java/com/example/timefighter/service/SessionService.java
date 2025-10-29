@@ -99,4 +99,18 @@ public class SessionService {
         }
         return SessionMapper.toResponseDTO(activeSessions.get(0));
     }
+
+    public SessionResponseDTO getCurrentSession() {
+    // Find any session that's ACTIVE or PAUSED (not COMPLETED)
+    List<Session> currentSessions = sessionRepository.findAll().stream()
+            .filter(s -> "ACTIVE".equals(s.getStatus()) || "PAUSED".equals(s.getStatus()))
+            .sorted((a, b) -> b.getStartTime().compareTo(a.getStartTime())) // Most recent first
+            .toList();
+    
+    if (currentSessions.isEmpty()) {
+        return null;
+    }
+    
+    return SessionMapper.toResponseDTO(currentSessions.get(0));
+}
 }
