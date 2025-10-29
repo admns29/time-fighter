@@ -1,21 +1,20 @@
 package com.example.timefighter.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.timefighter.model.Session;
-import com.example.timefighter.service.SessionService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.example.timefighter.dto.SessionRequestDTO;
+import com.example.timefighter.dto.SessionResponseDTO;
+import com.example.timefighter.service.SessionService;
 
-
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/sessions")
@@ -28,38 +27,37 @@ public class SessionController {
     }
     
     @PostMapping("/start")
-    public Session startSession(@RequestParam String category) {
-        return sessionService.startSession(category);
+    public SessionResponseDTO startSession(@Valid @RequestBody SessionRequestDTO request) {
+        return sessionService.startSession(request);
     }
 
     @PutMapping("/{id}/pause")
-    public Session pauseSession(@PathVariable Long id) {
+    public SessionResponseDTO pauseSession(@PathVariable Long id) {
         return sessionService.pauseSession(id);
     }
     
     @PutMapping("/{id}/resume")
-    public Session resumeSession(@PathVariable Long id) {
+    public SessionResponseDTO resumeSession(@PathVariable Long id) {
         return sessionService.resumeSession(id);
     }
 
     @PutMapping("/{id}/stop")
-    public Session stopSession(@PathVariable Long id) {
+    public SessionResponseDTO stopSession(@PathVariable Long id) {
         return sessionService.stopSession(id);
     }
 
     @GetMapping
-    public List<Session> getAllSessions() {
+    public List<SessionResponseDTO> getAllSessions() {
         return sessionService.getAllSessions();
     }
 
-    @GetMapping("/active")
-    public Session getActiveSession() {
-        return sessionService.getActiveSession();
-    }
-
-    @GetMapping("/{id}/session")
-    public Session getSession(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public SessionResponseDTO getSession(@PathVariable Long id) {
         return sessionService.getSession(id);
     }
-    
+
+    @GetMapping("/active")
+    public SessionResponseDTO getActiveSession() {
+        return sessionService.getActiveSession();
+    }
 }
