@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.example.timefighter.dto.SessionMapper;
 import com.example.timefighter.dto.SessionRequestDTO;
 import com.example.timefighter.dto.SessionResponseDTO;
+import com.example.timefighter.exception.InvalidSessionStateException;
+import com.example.timefighter.exception.ResourceNotFoundException;
 import com.example.timefighter.model.Session;
 import com.example.timefighter.repository.SessionRepository;
 
@@ -35,11 +37,10 @@ public class SessionService {
     
     public SessionResponseDTO pauseSession(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Session not found with id: " + sessionId));
         
         if (!"ACTIVE".equals(session.getStatus())) {
-            throw new IllegalStateException("Can only pause active sessions");
-        }
+                throw new InvalidSessionStateException("Can only pause active sessions");        }
         
         long additionalSeconds = Duration.between(session.getStartTime(), LocalDateTime.now()).getSeconds();
         session.setDuration(session.getDuration() + additionalSeconds);
@@ -51,10 +52,9 @@ public class SessionService {
 
     public SessionResponseDTO resumeSession(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
-        
+                .orElseThrow(() -> new ResourceNotFoundException("Session not found with id: " + sessionId));        
         if (!"PAUSED".equals(session.getStatus())) {
-            throw new IllegalStateException("Can only resume paused sessions");
+            throw new InvalidSessionStateException("Can only resume paused sessions with id: " + sessionId);
         }
         
         session.setStatus("ACTIVE");
@@ -66,8 +66,8 @@ public class SessionService {
 
     public SessionResponseDTO stopSession(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
-        
+                .orElseThrow(() -> new ResourceNotFoundException("Session not found with id: " + sessionId));
+
         if ("ACTIVE".equals(session.getStatus())) {
             long additionalSeconds = Duration.between(session.getStartTime(), LocalDateTime.now()).getSeconds();
             session.setDuration(session.getDuration() + additionalSeconds);
@@ -82,7 +82,7 @@ public class SessionService {
 
     public SessionResponseDTO getSession(Long sessionId) {
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Session not found"));
         return SessionMapper.toResponseDTO(session);
     }
 
