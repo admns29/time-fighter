@@ -97,63 +97,79 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-      <h3 className="text-xl font-bold text-gray-800 mb-4">{category}</h3>
+    <div className="relative group">
+      {/* Gradient border effect */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-lg blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
       
-      <div className="text-4xl font-mono font-bold text-center mb-6 text-gray-700">
-        {formatTime(displayTime)}
-      </div>
-      
-      <div className="flex gap-2 justify-center">
-        {!isMySession ? (
-          <button
-            onClick={handleStart}
-            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
-          >
-            Start
-          </button>
-        ) : isActive ? (
-          <>
+      {/* Card content */}
+      <div className="relative bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-6 border border-slate-700/50">
+        {/* Category with gradient */}
+        <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4">
+          {category}
+        </h3>
+        
+        {/* Timer Display with glow */}
+        <div className={`text-5xl font-mono font-bold text-center mb-6 transition-all duration-300 ${
+          isActive ? 'text-cyan-400 glow-cyan scale-105' : 'text-gray-400'
+        }`}>
+          {formatTime(displayTime)}
+        </div>
+        
+        {/* Buttons */}
+        <div className="flex gap-2 justify-center">
+          {!isMySession ? (
             <button
-              onClick={handlePause}
-              className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+              onClick={handleStart}
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-green-500/50 hover:scale-105"
             >
-              Pause
+              Start
             </button>
-            <button
-              onClick={handleStop}
-              className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
-            >
-              Stop
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={handleResume}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
-            >
-              Resume
-            </button>
-            <button
-              onClick={handleStop}
-              className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
-            >
-              Stop
-            </button>
-          </>
+          ) : isActive ? (
+            <>
+              <button
+                onClick={handlePause}
+                className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-yellow-500/50 hover:scale-105"
+              >
+                Pause
+              </button>
+              <button
+                onClick={handleStop}
+                className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-red-500/50 hover:scale-105"
+              >
+                Stop
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleResume}
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/50 hover:scale-105"
+              >
+                Resume
+              </button>
+              <button
+                onClick={handleStop}
+                className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-red-500/50 hover:scale-105"
+              >
+                Stop
+              </button>
+            </>
+          )}
+        </div>
+        
+        {/* Status Badge with glow */}
+        {isMySession && (
+          <div className="mt-5 text-center">
+            <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-300 ${
+              isActive 
+                ? 'bg-green-900/50 text-green-300 border-green-500/50 shadow-lg shadow-green-500/30' 
+                : 'bg-yellow-900/50 text-yellow-300 border-yellow-500/50 shadow-lg shadow-yellow-500/30'
+            }`}>
+              {isActive ? '● Active' : '❚❚ Paused'}
+            </span>
+          </div>
         )}
       </div>
-      
-      {isMySession && (
-        <div className="mt-4 text-center">
-          <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-            isActive ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {isActive ? 'Active' : 'Paused'}
-          </span>
-        </div>
-      )}
     </div>
   );
 };
