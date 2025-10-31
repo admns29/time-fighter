@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TimerCard from '../components/TimerCard';
+import SessionTable from '../components/SessionTable';
 import { getCurrentSession } from '../api/sessionApi'; 
 
     const Dashboard = () => {
@@ -45,6 +46,10 @@ import { getCurrentSession } from '../api/sessionApi';
                 onSessionUpdate={fetchActiveSession}
             />
             ))}
+        </div>
+        {/* Session History Table */}
+        <div className="flex items-center justify-center bg-transparent from-slate-900 to-slate-800">
+            <SessionTable />
         </div>
         </div>
     </div>
