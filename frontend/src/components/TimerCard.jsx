@@ -19,48 +19,42 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
 
 
   useEffect(() => {
-    console.log('=== useEffect triggered ===');
-    console.log('category:', category);
-    console.log('activeSession:', activeSession);
-    console.log('isMySession:', isMySession);
-    console.log('isActive:', isActive);
-    console.log('prevSessionId:', prevSessionId);
-    
     if (!isMySession) {
-      console.log('Not my session, setting display to 0');
       setDisplayTime(0);
       setPrevSessionId(null);
       return;
     }
 
-    // Session ID changed - new session started
+    // 🕒 If a new or resumed session is detected
     if (activeSession.id !== prevSessionId) {
-      console.log('New session detected, resetting to backend duration:', activeSession.duration);
-      const baseDuration = activeSession.duration;
+      let baseDuration = activeSession.duration;
+
+      // 💡 If the session is ACTIVE, calculate time elapsed since startTime
+      if (activeSession.status === 'ACTIVE' && activeSession.startTime) {
+        const now = new Date();
+        const startedAt = new Date(activeSession.startTime);
+        const elapsedSinceStart = Math.floor((now - startedAt) / 1000);
+        baseDuration += elapsedSinceStart;
+      }
+
       setDisplayTime(baseDuration);
       setPrevSessionId(activeSession.id);
     }
 
+    // ⏸️ If paused, just show the stored duration
     if (!isActive) {
-      console.log('Session paused, syncing with backend:', activeSession.duration);
-      // When paused, always sync with backend
       setDisplayTime(activeSession.duration);
       return;
     }
 
-    console.log('Starting timer interval from current displayTime');
+    // ▶️ Continue timer while active
     const interval = setInterval(() => {
-      setDisplayTime(prev => {
-        console.log('Timer tick, prev:', prev, 'new:', prev + 1);
-        return prev + 1;
-      });
+      setDisplayTime(prev => prev + 1);
     }, 1000);
 
-    return () => {
-      console.log('Cleaning up interval');
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [activeSession?.id, activeSession?.duration, activeSession?.status, isMySession, isActive, prevSessionId]);
+
 
   const handleStart = async () => {
     try {
