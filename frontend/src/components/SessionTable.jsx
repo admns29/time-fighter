@@ -1,21 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { getAllSessions } from '../api/sessionApi';
+import React from 'react';
 
-const SessionTable = () => {
-  const [sessions, setSessions] = useState([]);
 
-  useEffect(() => {
-    const fetchSessions = async () => {
-      try {
-        const fetchedSessions = await getAllSessions();
-        setSessions(fetchedSessions);
-      } catch (error) {
-        console.error('Error fetching sessions:', error);
-      }
-    };
-
-    fetchSessions();
-  }, []); // Empty array = run once on mount
+const SessionTable = ({ sessions }) => {
+   // Empty array = run once on mount
 
   // Format datetime to readable format
   const formatTime = (timeString) => {
@@ -38,7 +25,7 @@ const SessionTable = () => {
   };
 
     return (
-    <div className="max-w-5xl w-full px-4 py-8">
+    <div className="flex items-center justify-center bg-transparent from-slate-900 to-slate-800 padding-6 mt-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-6">
         Session History
         </h2>
