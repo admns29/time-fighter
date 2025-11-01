@@ -11,7 +11,8 @@ public class SessionMapper {
             session.getStartTime(),
             session.getEndTime(),
             session.getDuration(),
-            session.getStatus()
+            session.getStatus(),
+            session.getGoalDuration()
         );
     }
 }

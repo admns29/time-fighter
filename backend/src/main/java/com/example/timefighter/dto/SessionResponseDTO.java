@@ -9,6 +9,7 @@ public class SessionResponseDTO {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Long duration;
+    private Long goalDuration;
     private String status;
     
     // Default constructor
@@ -16,12 +17,13 @@ public class SessionResponseDTO {
     
     // Full constructor
     public SessionResponseDTO(Long id, String category, LocalDateTime startTime, 
-                              LocalDateTime endTime, Long duration, String status) {
+                              LocalDateTime endTime, Long duration, String status, Long goalDuration) {
         this.id = id;
         this.category = category;
         this.startTime = startTime;
         this.endTime = endTime;
         this.duration = duration;
+        this.goalDuration = goalDuration;
         this.status = status;
     }
     
@@ -64,6 +66,14 @@ public class SessionResponseDTO {
     
     public void setDuration(Long duration) {
         this.duration = duration;
+    }
+
+    public Long getGoalDuration() {
+        return goalDuration;
+    }
+
+    public void setGoalDuration(Long goalDuration) {
+        this.goalDuration = goalDuration;
     }
     
     public String getStatus() {

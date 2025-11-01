@@ -21,6 +21,9 @@ public class Session {
     
     @Column(nullable = false)
     private Long duration; // total duration in seconds
+
+    @Column(nullable = true)
+    private Long goalDuration; // goal duration in seconds, can be null
     
     @Column(nullable = false)
     private String status; // ACTIVE, PAUSED, COMPLETED
@@ -72,6 +75,14 @@ public class Session {
     
     public void setDuration(Long duration) {
         this.duration = duration;
+    }
+
+    public Long getGoalDuration() {
+        return goalDuration;
+    }
+
+    public void setGoalDuration(Long goalDuration) {
+        this.goalDuration = goalDuration;
     }
     
     public String getStatus() {

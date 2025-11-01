@@ -15,6 +15,8 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
   const isMySession = activeSession && activeSession.category === category;
   const isActive = isMySession && activeSession.status === 'ACTIVE';
   const [prevSessionId, setPrevSessionId] = useState(null);
+  const [goalMinutes, setGoalMinutes] = useState(''); // User input for goal
+
 
   useEffect(() => {
     console.log('=== useEffect triggered ===');
@@ -62,10 +64,14 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
 
   const handleStart = async () => {
     try {
-      await startSession(category);
+      //Convert minutes to seconds
+      const goalSeconds = goalMinutes ? parseInt(goalMinutes) * 60 : null;
+      await startSession(category, goalSeconds);
       onSessionUpdate();
     } catch (error) {
       alert('Failed to start session');
+    } finally {
+      setIsStarting(false);
     }
   };
 
@@ -96,6 +102,16 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
     }
   };
 
+  const handleGoalDuration = async (seconds) => {
+    try {
+      // Assume there's an API to set goal duration
+      await setGoalDuration(activeSession.id, seconds);
+      onSessionUpdate();
+    } catch (error) {
+      alert('Failed to set goal duration');
+    }
+  };
+
   return (
     <div className="relative group">
       {/* Gradient border effect */}
@@ -107,7 +123,24 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
         <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4">
           {category}
         </h3>
-        
+
+        {/* NEW: Goal Input - Only show when no active session */}
+        {!isMySession && !activeSession && (
+          <div className="mb-4">
+            <label className="block text-gray-400 text-sm mb-2">
+              
+            </label>
+            <input
+              type="number"
+              value={goalMinutes}
+              onChange={(e) => setGoalMinutes(e.target.value)}
+              placeholder="Duration in minutes (Optional)"
+              min="1"
+              className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+            />
+          </div>
+        )}
+
         {/* Timer Display with glow */}
         <div className={`text-5xl font-mono font-bold text-center mb-6 transition-all duration-300 ${
           isActive ? 'text-cyan-400 glow-cyan scale-105' : 'text-gray-400'
@@ -120,7 +153,11 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
           {!isMySession ? (
             <button
               onClick={handleStart}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-green-500/50 hover:scale-105"
+              className={`font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg ${
+                activeSession 
+                  ? 'bg-gray-600 cursor-not-allowed opacity-50' // Disabled style
+                  : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 hover:shadow-green-500/50 hover:scale-105'
+              }`}
             >
               Start
             </button>

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SessionRepository extends JpaRepository<Session, Long> {
     List<Session> findByStatus(String status);
+    List<Session> findByStatusIn(List<String> statuses);
     // Provides built-in CRUD methods for Session entities 
     // (save, findById, findAll, deleteById, etc.)
     // Add custom query methods here if needed (e.g., findByUserId, findByStatus)

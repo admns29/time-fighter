@@ -25,11 +25,20 @@ public class SessionService {
     }
     
     public SessionResponseDTO startSession(SessionRequestDTO request) {
+        Session session = sessionRepository.findByStatusIn(List.of("ACTIVE", "PAUSED"))
+        .stream()
+        .findFirst()
+        .orElse(null);
+        if (session != null) {
+            throw new InvalidSessionStateException("An active session already exists with id: " + session.getId());
+        }
+
         Session newSession = new Session();
         newSession.setCategory(request.getCategory());
         newSession.setStatus("ACTIVE");
         newSession.setStartTime(LocalDateTime.now());
         newSession.setDuration(0L);
+        newSession.setGoalDuration(request.getGoalDuration());
         
         Session saved = sessionRepository.save(newSession);
         return SessionMapper.toResponseDTO(saved);

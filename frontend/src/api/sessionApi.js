@@ -74,4 +74,19 @@ export const getCurrentSession = async () => {
     console.error('Error fetching current session:', error);
     return null; // Return null instead of throwing
   }
+  
+};
+
+// Set goal duration for a session
+export const setGoalDuration = async (sessionId, goalDuration = null) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/${sessionId}/start`, { 
+      category,
+      goalDuration 
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error setting goal duration:', error);
+    throw error;
+  }
 };
