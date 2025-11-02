@@ -39,6 +39,8 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
 
       setDisplayTime(baseDuration);
       setPrevSessionId(activeSession.id);
+      console.log('activeSession goalDuration:', activeSession?.goalDuration);
+      console.log('displayTime initial:', baseDuration);
     }
 
     // ⏸️ If paused, just show the stored duration
@@ -47,13 +49,28 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
       return;
     }
 
+
+
     // ▶️ Continue timer while active
     const interval = setInterval(() => {
-      setDisplayTime(prev => prev + 1);
+      setDisplayTime(prev => {
+        const newTime = prev + 1;
+
+        // 🎯 Check if goal reached
+        if (activeSession.goalDuration && newTime >= activeSession.goalDuration) {
+          console.log('Goal reached! Auto-stopping session');
+          handleStop(); // Auto-stop session
+          clearInterval(interval); // Stop ticking
+          return activeSession.goalDuration; // Cap the display
+        }
+
+        return newTime;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [activeSession?.id, activeSession?.duration, activeSession?.status, isMySession, isActive, prevSessionId]);
+  }, [activeSession?.id, activeSession?.duration, activeSession?.status,
+    activeSession?.goalDuration, isMySession, isActive, prevSessionId]);
 
 
   const handleStart = async () => {
@@ -61,18 +78,16 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
       //Convert minutes to seconds
       const goalSeconds = goalMinutes ? parseInt(goalMinutes) * 60 : null;
       await startSession(category, goalSeconds);
-      onSessionUpdate();
+      await onSessionUpdate();
     } catch (error) {
       alert('Failed to start session');
-    } finally {
-      setIsStarting(false);
     }
   };
 
   const handlePause = async () => {
     try {
       await pauseSession(activeSession.id);
-      onSessionUpdate();
+      await onSessionUpdate();
     } catch (error) {
       alert('Failed to pause session');
     }
@@ -81,7 +96,7 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
   const handleResume = async () => {
     try {
       await resumeSession(activeSession.id);
-      onSessionUpdate();
+      await onSessionUpdate();
     } catch (error) {
       alert('Failed to resume session');
     }
@@ -90,7 +105,7 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
   const handleStop = async () => {
     try {
       await stopSession(activeSession.id);
-      onSessionUpdate();
+      await onSessionUpdate();
     } catch (error) {
       alert('Failed to stop session');
     }
@@ -100,7 +115,7 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
     try {
       // Assume there's an API to set goal duration
       await setGoalDuration(activeSession.id, seconds);
-      onSessionUpdate();
+      await onSessionUpdate();
     } catch (error) {
       alert('Failed to set goal duration');
     }

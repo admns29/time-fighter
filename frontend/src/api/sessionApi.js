@@ -6,9 +6,11 @@ const API_BASE_URL = '/api/sessions';
 // Start a new session
 // Takes a category string (e.g., "LeetCode")
 // Returns: Promise with session data
-export const startSession = async (category) => {
+export const startSession = async (category, goalDuration = null) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/start`, { category });
+    const body = { category };
+    if (goalDuration != null) body.goalDuration = goalDuration;
+    const response = await axios.post(`${API_BASE_URL}/start`, body);
     return response.data;
   } catch (error) {
     console.error('Error starting session:', error);
@@ -80,8 +82,7 @@ export const getCurrentSession = async () => {
 // Set goal duration for a session
 export const setGoalDuration = async (sessionId, goalDuration = null) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/${sessionId}/start`, { 
-      category,
+    const response = await axios.post(`${API_BASE_URL}/${sessionId}/goal`, {
       goalDuration 
     });
     return response.data;

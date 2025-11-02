@@ -1,6 +1,7 @@
 package com.example.timefighter.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import com.example.timefighter.dto.SessionResponseDTO;
 import com.example.timefighter.service.SessionService;
 
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/sessions")
@@ -65,4 +67,11 @@ public class SessionController {
     public SessionResponseDTO getActiveSession() {
         return sessionService.getActiveSession();
     }
+
+    @PutMapping("/{id}/goal")
+    public SessionResponseDTO setGoalDuration(@PathVariable Long id, @RequestBody Map<String, Long> body) {
+        Long goalDuration = body.get("goalDuration");
+        return sessionService.setGoalDuration(id, goalDuration);
+    }
+    
 }

@@ -119,7 +119,21 @@ public class SessionService {
     if (currentSessions.isEmpty()) {
         return null;
     }
-    
     return SessionMapper.toResponseDTO(currentSessions.get(0));
-}
+    }
+
+    public SessionResponseDTO setGoalDuration(Long sessionId, Long goalDuration) {
+        Session session = sessionRepository.findById(sessionId)
+            .orElseThrow(() -> new ResourceNotFoundException("Session not found with id: " + sessionId));
+        session.setGoalDuration(goalDuration);
+        Session saved = sessionRepository.save(session);
+        return SessionMapper.toResponseDTO(saved);
+    }
+
+    public SessionResponseDTO getGoalDuration(Long sessionId) {
+    Session session = sessionRepository.findById(sessionId)
+        .orElseThrow(() -> new ResourceNotFoundException("Session not found with id: " + sessionId));
+    return SessionMapper.toResponseDTO(session); // response includes goalDuration
+    }
+
 }
