@@ -25,7 +25,7 @@ const SessionTable = ({ sessions }) => {
   };
 
     return (
-    <div className="flex items-center justify-center bg-transparent from-slate-900 to-slate-800 padding-6 mt-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex flex-col items-center bg-transparent from-slate-900 to-slate-800 py-6 mt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-6">
         Session History
         </h2>

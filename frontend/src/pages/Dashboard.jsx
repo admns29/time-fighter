@@ -38,8 +38,8 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with gradient text */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-extrabold mb-3 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+        <div className="text-center mb-12 pt-8">
+          <h1 className="text-6xl font-extrabold leading-snug mb-4 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent overflow-visible">
             Time Fighter
           </h1>
           <p className="text-gray-400 text-lg">Track your study sessions across different categories</p>
@@ -58,8 +58,11 @@ const Dashboard = () => {
           ))}
         </div>
         
-        {/* Session History Table */}
+        {/* Session History Section */}
+        <div className="mt-8 text-center">
         <SessionTable sessions={sessions} />
+        </div>
+
       </div>
     </div>
   );
