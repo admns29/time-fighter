@@ -11,6 +11,15 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
+    // Calculate progress percentage
+  const calculateProgress = () => {
+    if (!activeSession?.goalDuration || activeSession.goalDuration === 0) {
+      return 0; // No goal set
+    }
+    const progress = (displayTime / activeSession.goalDuration) * 100;
+    return Math.min(progress, 100); // Cap at 100%
+  };
+
   // Check if this card has the active session
   const isMySession = activeSession && activeSession.category === category;
   const isActive = isMySession && activeSession.status === 'ACTIVE';
@@ -111,16 +120,6 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
     }
   };
 
-  const handleGoalDuration = async (seconds) => {
-    try {
-      // Assume there's an API to set goal duration
-      await setGoalDuration(activeSession.id, seconds);
-      await onSessionUpdate();
-    } catch (error) {
-      alert('Failed to set goal duration');
-    }
-  };
-
   return (
     <div className="relative group">
       {/* Gradient border effect */}
@@ -156,7 +155,37 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
         }`}>
           {formatTime(displayTime)}
         </div>
-        
+
+        {/* Progress Bar - Only show if goal is set */}
+        {isMySession && activeSession?.goalDuration && (
+          <div className="mb-6">
+            {/* Goal info text */}
+            <div className="flex justify-between text-xs text-gray-400 mb-2">
+              <span>Progress</span>
+              <span>Goal: {formatTime(activeSession.goalDuration)}</span>
+            </div>
+            
+            {/* Progress bar container */}
+            <div className="w-full bg-slate-700/50 rounded-full h-3 overflow-hidden border border-slate-600">
+              {/* Progress bar fill */}
+              <div 
+                className={`h-full rounded-full transition-all duration-300 ${
+                  calculateProgress() >= 100 
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-500' 
+                    : 'bg-gradient-to-r from-cyan-500 to-purple-500'
+                }`}
+                style={{ width: `${calculateProgress()}%` }}
+              >
+              </div>
+            </div>
+            
+            {/* Percentage text */}
+            <div className="text-center text-sm text-gray-400 mt-1">
+              {calculateProgress().toFixed(0)}%
+            </div>
+          </div>
+        )}
+
         {/* Buttons */}
         <div className="flex gap-2 justify-center">
           {!isMySession ? (
