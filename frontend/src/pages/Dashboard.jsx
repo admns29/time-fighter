@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import TimerCard from '../components/TimerCard';
 import SessionTable from '../components/SessionTable';
 import { getCurrentSession, getAllSessions } from '../api/sessionApi'; // Add getAllSessions
-import { getAllCategories } from '../api/categoryApi'; 
-
+import CategoryModal from '../components/CategoryModal';
+import { getAllCategories, createCategory, updateCategory, deleteCategory } from '../api/categoryApi';
 const Dashboard = () => {
   const [categories, setCategories] = useState([]);
   const [activeSession, setActiveSession] = useState(null);
-  const [sessions, setSessions] = useState([]); // Add this state!
+  const [sessions, setSessions] = useState([]); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState(null);
   
   const fetchActiveSession = async () => {
     try {
@@ -37,6 +39,33 @@ const Dashboard = () => {
       console.error('Error fetching categories:', error);
     }
   };
+
+    const handleSaveCategory = async (categoryData) => {
+    try {
+        if (categoryToEdit) {
+        // Update existing
+        await updateCategory(categoryToEdit.id, categoryData);
+        } else {
+        // Create new
+        await createCategory(categoryData);
+        }
+        await fetchCategories(); // Refresh list
+        setIsModalOpen(false);
+        setCategoryToEdit(null);
+    } catch (error) {
+        alert('Failed to save category: ' + (error.response?.data?.message || error.message));
+    }
+    };
+
+    const handleAddCategory = () => {
+    setCategoryToEdit(null);
+    setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setCategoryToEdit(null);
+    };
 
 
   useEffect(() => {
@@ -70,6 +99,26 @@ const Dashboard = () => {
           ))}
         </div>
         
+          {/* NEW: Add Category Card */}
+        <div>
+        <button
+            onClick={handleAddCategory}
+            className="bg-slate-800/50 backdrop-blur-sm rounded-lg border-2 border-dashed border-slate-600 hover:border-cyan-500 p-6 transition-all hover:bg-slate-700/50 group"
+        >
+            <div className="flex flex-col items-center justify-center h-full text-gray-400 group-hover:text-cyan-400 transition-colors">
+            <span className="text-5xl mb-3">+</span>
+            <span className="text-lg font-semibold">Add Category</span>
+            </div>
+        </button>
+        </div>
+
+         {/* NEW: Category Modal */}
+        <CategoryModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSaveCategory}
+        categoryToEdit={categoryToEdit}
+        />
         {/* Session History Section */}
         <div className="mt-8 text-center">
         <SessionTable sessions={sessions} />
