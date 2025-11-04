@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import TimerCard from '../components/TimerCard';
 import SessionTable from '../components/SessionTable';
 import { getCurrentSession, getAllSessions } from '../api/sessionApi'; // Add getAllSessions
+import { getAllCategories } from '../api/categoryApi'; 
 
 const Dashboard = () => {
-  const categories = ['LeetCode', 'Python', 'Java', 'Cybersecurity'];
+  const [categories, setCategories] = useState([]);
   const [activeSession, setActiveSession] = useState(null);
   const [sessions, setSessions] = useState([]); // Add this state!
   
@@ -28,10 +29,20 @@ const Dashboard = () => {
       console.error('Error fetching all sessions:', error);
     }
   };
+    const fetchCategories = async () => {
+    try {
+      const fetchedCategories = await getAllCategories();
+      setCategories(fetchedCategories);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
 
   useEffect(() => {
     fetchActiveSession();
     fetchSessions();
+    fetchCategories();
   }, []);
 
   return (
@@ -50,8 +61,9 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category) => (
             <TimerCard
-              key={category}
-              category={category}
+              key={category.id}
+              category={category.name}
+              categoryData={category}
               activeSession={activeSession}
               onSessionUpdate={fetchActiveSession}
             />

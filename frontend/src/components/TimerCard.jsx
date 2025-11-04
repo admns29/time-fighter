@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { startSession, pauseSession, resumeSession, stopSession } from '../api/sessionApi';
 
-const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
+const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate }) => {
   const [displayTime, setDisplayTime] = useState(0);
   
   const formatTime = (seconds) => {
@@ -26,6 +26,11 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
   const [prevSessionId, setPrevSessionId] = useState(null);
   const [goalMinutes, setGoalMinutes] = useState(''); // User input for goal
 
+  useEffect(() => {
+    if (categoryData?.defaultGoalDuration && !goalMinutes) {
+      setGoalMinutes(Math.floor(categoryData.defaultGoalDuration / 60)); // Convert seconds to minutes
+    }
+  }, [categoryData]);
 
   useEffect(() => {
     if (!isMySession) {
@@ -129,6 +134,7 @@ const TimerCard = ({ category, activeSession, onSessionUpdate }) => {
       <div className="relative bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-6 border border-slate-700/50">
         {/* Category with gradient */}
         <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4">
+          {categoryData?.icon && <span className="text-2xl">{categoryData.icon}</span>}
           {category}
         </h3>
 
