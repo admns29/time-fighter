@@ -31,7 +31,7 @@ public class CategoryController {
         return categoryService.getCategoryById(id);
     }
 
-    @PostMapping("/")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryResponseDTO createCategory(@Valid @RequestBody CategoryRequestDTO dto) {
         return categoryService.createCategory(dto);
