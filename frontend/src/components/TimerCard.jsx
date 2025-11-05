@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { startSession, pauseSession, resumeSession, stopSession } from '../api/sessionApi';
 
-const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate }) => {
+const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onEditCategory, onDeleteCategory }) => {
   const [displayTime, setDisplayTime] = useState(0);
   
   const formatTime = (seconds) => {
@@ -25,6 +25,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate }) =
   const isActive = isMySession && activeSession.status === 'ACTIVE';
   const [prevSessionId, setPrevSessionId] = useState(null);
   const [goalMinutes, setGoalMinutes] = useState(''); // User input for goal
+  const [showMenu, setShowMenu] = useState(false); 
 
   useEffect(() => {
     if (categoryData?.defaultGoalDuration && !goalMinutes) {
@@ -125,10 +126,23 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate }) =
     }
   };
 
+  const handleEdit = () => {
+    onEditCategory(categoryData);
+    setShowMenu(false);
+  };
+
+  const handleDelete = () => {
+    if (window.confirm(`Delete category "${category}"? This cannot be undone.`)) {
+      onDeleteCategory(categoryData.id);
+    }
+    setShowMenu(false);
+  };
+
   return (
     <div className="relative group">
       {/* Gradient border effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-lg blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-lg 
+      blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
       
       {/* Card content */}
       <div className="relative bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-6 border border-slate-700/50">
@@ -137,6 +151,38 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate }) =
           {categoryData?.icon && <span className="text-2xl">{categoryData.icon}</span>}
           {category}
         </h3>
+
+        {/* Options Menu - Only show when no active session */}
+        {!isMySession && (
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="text-gray-400 hover:text-white p-1 rounded hover:bg-slate-700/50 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+              </svg>
+            </button>
+            
+            {/* Dropdown Menu */}
+            {showMenu && (
+              <div className="absolute right-0 mt-2 w-32 bg-slate-800 rounded-lg shadow-lg border border-slate-700 py-1 z-10">
+                <button
+                  onClick={handleEdit}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+                >
+                  ✏️ Edit
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300 transition-colors"
+                >
+                  🗑️ Delete
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* NEW: Goal Input - Only show when no active session */}
         {!isMySession && !activeSession && (
@@ -150,7 +196,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate }) =
               onChange={(e) => setGoalMinutes(e.target.value)}
               placeholder="Duration in minutes (Optional)"
               min="1"
-              className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+              className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-3 
+              py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
             />
           </div>
         )}
@@ -209,13 +256,15 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate }) =
             <>
               <button
                 onClick={handlePause}
-                className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-yellow-500/50 hover:scale-105"
+                className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 
+                text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-yellow-500/50 hover:scale-105"
               >
                 Pause
               </button>
               <button
                 onClick={handleStop}
-                className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-red-500/50 hover:scale-105"
+                className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white 
+                font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-red-500/50 hover:scale-105"
               >
                 Stop
               </button>
@@ -224,13 +273,15 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate }) =
             <>
               <button
                 onClick={handleResume}
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/50 hover:scale-105"
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white 
+                font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/50 hover:scale-105"
               >
                 Resume
               </button>
               <button
                 onClick={handleStop}
-                className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-red-500/50 hover:scale-105"
+                className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white 
+                font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-red-500/50 hover:scale-105"
               >
                 Stop
               </button>
