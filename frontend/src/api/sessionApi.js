@@ -91,3 +91,14 @@ export const setGoalDuration = async (sessionId, goalDuration = null) => {
     throw error;
   }
 };
+
+// Get statistics
+export const getStatistics = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/statistics`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching statistics:', error);
+    throw error;
+  }
+};

@@ -4,6 +4,8 @@ import SessionTable from '../components/SessionTable';
 import { getCurrentSession, getAllSessions } from '../api/sessionApi'; // Add getAllSessions
 import CategoryModal from '../components/CategoryModal';
 import { getAllCategories, createCategory, updateCategory, deleteCategory } from '../api/categoryApi';
+import Statistics from '../components/Statistics';
+
 const Dashboard = () => {
   const [categories, setCategories] = useState([]);
   const [activeSession, setActiveSession] = useState(null);
@@ -142,6 +144,10 @@ const Dashboard = () => {
         <SessionTable sessions={sessions} />
         </div>
 
+        {/* Statistics Section */}
+        <div className="mt-12 text-center">
+        <Statistics />
+        </div>
       </div>
     </div>
   );
