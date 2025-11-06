@@ -50,21 +50,37 @@ const Dashboard = () => {
         await createCategory(categoryData);
         }
         await fetchCategories(); // Refresh list
-        setIsModalOpen(false);
-        setCategoryToEdit(null);
+            setIsModalOpen(false);
+            setCategoryToEdit(null);
     } catch (error) {
         alert('Failed to save category: ' + (error.response?.data?.message || error.message));
     }
     };
 
     const handleAddCategory = () => {
-    setCategoryToEdit(null);
-    setIsModalOpen(true);
+        setCategoryToEdit(null);
+        setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setCategoryToEdit(null);
+        setIsModalOpen(false);
+        setCategoryToEdit(null);
+    };
+
+    const handleEditCategory = (category) => {
+        setCategoryToEdit(category);
+        setIsModalOpen(true);
+    };
+
+    const handleDeleteCategory = async (categoryId) => {
+        try {
+            await deleteCategory(categoryId);
+            await fetchCategories(); // Refresh list
+            // If the deleted category had an active session, refresh that too
+            await fetchActiveSession();
+        } catch (error) {
+            alert('Failed to delete category: ' + (error.response?.data?.message || error.message));
+        }
     };
 
 
@@ -90,11 +106,13 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category) => (
             <TimerCard
-              key={category.id}
-              category={category.name}
-              categoryData={category}
-              activeSession={activeSession}
-              onSessionUpdate={fetchActiveSession}
+                key={category.id}
+                category={category.name}
+                categoryData={category}
+                activeSession={activeSession}
+                onSessionUpdate={fetchActiveSession}
+                onEditCategory={handleEditCategory}     
+                onDeleteCategory={handleDeleteCategory} 
             />
           ))}
         </div>
