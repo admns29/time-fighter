@@ -3,7 +3,7 @@ import { startSession, pauseSession, resumeSession, stopSession } from '../api/s
 
 const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onEditCategory, onDeleteCategory }) => {
   const [displayTime, setDisplayTime] = useState(0);
-  
+
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -11,7 +11,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
-    // Calculate progress percentage
+  // Calculate progress percentage
   const calculateProgress = () => {
     if (!activeSession?.goalDuration || activeSession.goalDuration === 0) {
       return 0; // No goal set
@@ -25,7 +25,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
   const isActive = isMySession && activeSession.status === 'ACTIVE';
   const [prevSessionId, setPrevSessionId] = useState(null);
   const [goalMinutes, setGoalMinutes] = useState(''); // User input for goal
-  const [showMenu, setShowMenu] = useState(false); 
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
     if (categoryData?.defaultGoalDuration && !goalMinutes) {
@@ -85,7 +85,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
 
     return () => clearInterval(interval);
   }, [activeSession?.id, activeSession?.duration, activeSession?.status,
-    activeSession?.goalDuration, isMySession, isActive, prevSessionId]);
+  activeSession?.goalDuration, isMySession, isActive, prevSessionId]);
 
 
   const handleStart = async () => {
@@ -143,7 +143,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
       {/* Gradient border effect */}
       <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-lg 
       blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
-      
+
       {/* Card content */}
       <div className="relative bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-6 border border-slate-700/50">
         {/* Category with gradient */}
@@ -163,7 +163,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
               </svg>
             </button>
-            
+
             {/* Dropdown Menu */}
             {showMenu && (
               <div className="absolute right-0 mt-2 w-32 bg-slate-800 rounded-lg shadow-lg border border-slate-700 py-1 z-10">
@@ -188,7 +188,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
         {!isMySession && !activeSession && (
           <div className="mb-4">
             <label className="block text-gray-400 text-sm mb-2">
-              
+
             </label>
             <input
               type="number"
@@ -203,9 +203,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
         )}
 
         {/* Timer Display with glow */}
-        <div className={`text-5xl font-mono font-bold text-center mb-6 transition-all duration-300 ${
-          isActive ? 'text-cyan-400 glow-cyan scale-105' : 'text-gray-400'
-        }`}>
+        <div className={`text-5xl font-mono font-bold text-center mb-6 transition-all duration-300 ${isActive ? 'text-cyan-400 glow-cyan scale-105' : 'text-gray-400'
+          }`}>
           {formatTime(displayTime)}
         </div>
 
@@ -217,21 +216,20 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
               <span>Progress</span>
               <span>Goal: {formatTime(activeSession.goalDuration)}</span>
             </div>
-            
+
             {/* Progress bar container */}
             <div className="w-full bg-slate-700/50 rounded-full h-3 overflow-hidden border border-slate-600">
               {/* Progress bar fill */}
-              <div 
-                className={`h-full rounded-full transition-all duration-300 ${
-                  calculateProgress() >= 100 
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-500' 
-                    : 'bg-gradient-to-r from-cyan-500 to-purple-500'
-                }`}
+              <div
+                className={`h-full rounded-full transition-all duration-300 ${calculateProgress() >= 100
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                  : 'bg-gradient-to-r from-cyan-500 to-purple-500'
+                  }`}
                 style={{ width: `${calculateProgress()}%` }}
               >
               </div>
             </div>
-            
+
             {/* Percentage text */}
             <div className="text-center text-sm text-gray-400 mt-1">
               {calculateProgress().toFixed(0)}%
@@ -244,11 +242,10 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
           {!isMySession ? (
             <button
               onClick={handleStart}
-              className={`font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg ${
-                activeSession 
-                  ? 'bg-gray-600 cursor-not-allowed opacity-50' // Disabled style
-                  : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 hover:shadow-green-500/50 hover:scale-105'
-              }`}
+              className={`font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg ${activeSession
+                ? 'bg-gray-600 cursor-not-allowed opacity-50' // Disabled style
+                : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 hover:shadow-green-500/50 hover:scale-105'
+                }`}
             >
               Start
             </button>
@@ -288,15 +285,14 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
             </>
           )}
         </div>
-        
+
         {/* Status Badge with glow */}
         {isMySession && (
           <div className="mt-5 text-center">
-            <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-300 ${
-              isActive 
-                ? 'bg-green-900/50 text-green-300 border-green-500/50 shadow-lg shadow-green-500/30' 
-                : 'bg-yellow-900/50 text-yellow-300 border-yellow-500/50 shadow-lg shadow-yellow-500/30'
-            }`}>
+            <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-300 ${isActive
+              ? 'bg-green-900/50 text-green-300 border-green-500/50 shadow-lg shadow-green-500/30'
+              : 'bg-yellow-900/50 text-yellow-300 border-yellow-500/50 shadow-lg shadow-yellow-500/30'
+              }`}>
               {isActive ? '● Active' : '❚❚ Paused'}
             </span>
           </div>
