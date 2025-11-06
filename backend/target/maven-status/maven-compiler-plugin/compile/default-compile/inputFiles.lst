@@ -8,6 +8,7 @@
 /mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/dto/SessionMapper.java
 /mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/dto/SessionRequestDTO.java
 /mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/dto/SessionResponseDTO.java
+/mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/dto/StatisticsResponseDTO.java
 /mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/exception/ErrorResponse.java
 /mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/exception/GlobalExceptionHandler.java
 /mnt/d/Coding/UP Project/time-fighter/backend/src/main/java/com/example/timefighter/exception/InvalidSessionStateException.java

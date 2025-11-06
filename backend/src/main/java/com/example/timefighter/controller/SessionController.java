@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.timefighter.dto.SessionRequestDTO;
 import com.example.timefighter.dto.SessionResponseDTO;
+import com.example.timefighter.dto.StatisticsResponseDTO;
 import com.example.timefighter.service.SessionService;
 
 import jakarta.validation.Valid;
@@ -72,6 +73,11 @@ public class SessionController {
     public SessionResponseDTO setGoalDuration(@PathVariable Long id, @RequestBody Map<String, Long> body) {
         Long goalDuration = body.get("goalDuration");
         return sessionService.setGoalDuration(id, goalDuration);
+    }
+
+    @GetMapping("/statistics")
+    public StatisticsResponseDTO getStatistics() {
+        return sessionService.getStatistics();
     }
     
 }

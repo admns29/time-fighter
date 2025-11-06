@@ -2,9 +2,12 @@ package com.example.timefighter.service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import java.util.Comparator;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.example.timefighter.dto.SessionMapper;
@@ -14,6 +17,7 @@ import com.example.timefighter.exception.InvalidSessionStateException;
 import com.example.timefighter.exception.ResourceNotFoundException;
 import com.example.timefighter.model.Session;
 import com.example.timefighter.repository.SessionRepository;
+import com.example.timefighter.dto.StatisticsResponseDTO;
 
 @Service
 public class SessionService {
@@ -134,6 +138,91 @@ public class SessionService {
     Session session = sessionRepository.findById(sessionId)
         .orElseThrow(() -> new ResourceNotFoundException("Session not found with id: " + sessionId));
     return SessionMapper.toResponseDTO(session); // response includes goalDuration
+    }
+
+    public StatisticsResponseDTO getStatistics() {
+    List<Session> allSessions = sessionRepository.findAll();
+    
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startOfToday = now.toLocalDate().atStartOfDay();
+        LocalDateTime startOfWeek = now.toLocalDate().with(DayOfWeek.MONDAY).atStartOfDay();
+        
+        // Calculate total time today
+        Long totalTimeToday = allSessions.stream()
+                .filter(s -> s.getStartTime().isAfter(startOfToday))
+                .filter(s -> "COMPLETED".equals(s.getStatus()))
+                .mapToLong(Session::getDuration)
+                .sum();
+        
+        // Calculate total time this week
+        Long totalTimeThisWeek = allSessions.stream()
+                .filter(s -> s.getStartTime().isAfter(startOfWeek))
+                .filter(s -> "COMPLETED".equals(s.getStatus()))
+                .mapToLong(Session::getDuration)
+                .sum();
+        
+        // Calculate time per category
+        Map<String, Long> timePerCategory = allSessions.stream()
+                .filter(s -> "COMPLETED".equals(s.getStatus()))
+                .collect(Collectors.groupingBy(
+                        Session::getCategory,
+                        Collectors.summingLong(Session::getDuration)
+                ));
+        
+        // Find most studied category
+        String mostStudiedCategory = timePerCategory.isEmpty() ? null :
+                timePerCategory.entrySet().stream()
+                        .max(Map.Entry.comparingByValue())
+                        .map(Map.Entry::getKey)
+                        .orElse(null);
+        
+        // Calculate current streak (simplified - counts consecutive days with sessions)
+        Integer currentStreak = calculateStreak(allSessions);
+        
+        return new StatisticsResponseDTO(
+                totalTimeToday,
+                totalTimeThisWeek,
+                timePerCategory,
+                mostStudiedCategory,
+                currentStreak
+        );
+    }
+
+    private Integer calculateStreak(List<Session> sessions) {
+        if (sessions.isEmpty()) return 0;
+        
+        // Get unique dates with completed sessions, sorted descending
+        List<LocalDate> datesWithSessions = sessions.stream()
+                .filter(s -> "COMPLETED".equals(s.getStatus()))
+                .map(s -> s.getStartTime().toLocalDate())
+                .distinct()
+                .sorted(Comparator.reverseOrder())
+                .toList();
+        
+        if (datesWithSessions.isEmpty()) return 0;
+        
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+        
+        // Check if there's a session today or yesterday (to maintain streak)
+        if (!datesWithSessions.get(0).equals(today) && !datesWithSessions.get(0).equals(yesterday)) {
+            return 0; // Streak broken
+        }
+        
+        // Count consecutive days
+        int streak = 1;
+        for (int i = 1; i < datesWithSessions.size(); i++) {
+            LocalDate current = datesWithSessions.get(i);
+            LocalDate previous = datesWithSessions.get(i - 1);
+            
+            if (previous.minusDays(1).equals(current)) {
+                streak++;
+            } else {
+                break; // Streak broken
+            }
+        }
+        
+        return streak;
     }
 
 }
