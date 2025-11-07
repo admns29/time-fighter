@@ -210,7 +210,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
         )}
 
         {/* Timer Display with glow */}
-        <div className={`text-5xl font-mono font-bold text-center mb-6 transition-all duration-300 ${isActive ? 'text-cyan-400 glow-cyan scale-105' : 'text-gray-400'
+        <div className={`text-5xl font-mono font-bold text-center mb-6 transition-all duration-300 
+                        ${isActive ? 'text-cyan-500 dark:text-cyan-400 glow-cyan scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}>
           {formatTime(displayTime)}
         </div>
@@ -225,7 +226,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
             </div>
 
             {/* Progress bar container */}
-            <div className="w-full bg-slate-700/50 rounded-full h-3 overflow-hidden border border-slate-600">
+            <div className="w-full bg-slate-200 dark:bg-slate-700/50 rounded-full h-3 
+                            overflow-hidden border border-slate-300 dark:border-slate-600">
               {/* Progress bar fill */}
               <div
                 className={`h-full rounded-full transition-all duration-300 ${calculateProgress() >= 100
@@ -250,8 +252,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
             <button
               onClick={handleStart}
               className={`font-semibold py-2.5 px-6 rounded-lg transition-all duration-200 shadow-lg ${activeSession
-                ? 'bg-gray-600 cursor-not-allowed opacity-50' // Disabled style
-                : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 hover:shadow-green-500/50 hover:scale-105'
+                ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed opacity-50' // Disabled style
+                : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white hover:shadow-green-500/50 hover:scale-105'
                 }`}
             >
               Start
@@ -297,8 +299,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
         {isMySession && (
           <div className="mt-5 text-center">
             <span className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-300 ${isActive
-              ? 'bg-green-900/50 text-green-300 border-green-500/50 shadow-lg shadow-green-500/30'
-              : 'bg-yellow-900/50 text-yellow-300 border-yellow-500/50 shadow-lg shadow-yellow-500/30'
+              ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 border-green-300 dark:border-green-500/50 shadow-lg shadow-green-500/30'
+              : 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 border-yellow-300 dark:border-yellow-500/50 shadow-lg shadow-yellow-500/30'
               }`}>
               {isActive ? '● Active' : '❚❚ Paused'}
             </span>
