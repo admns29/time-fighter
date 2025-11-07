@@ -148,7 +148,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
       <div className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-lg 
                       shadow-2xl p-6 border border-slate-200 dark:border-slate-700/50">
         {/* Category with gradient */}
-        <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4">
+        <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 dark:from-cyan-400 
+                      dark:to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
           {categoryData?.icon && <span className="text-2xl">{categoryData.icon}</span>}
           {category}
         </h3>
@@ -158,7 +159,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="text-gray-400 hover:text-white p-1 rounded hover:bg-slate-700/50 transition-colors"
+              className="ttext-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white p-1 
+                        rounded hover:bg-slate-200 dark:hover:bg-slate-700/50 transition-colors"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
@@ -167,16 +169,19 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
 
             {/* Dropdown Menu */}
             {showMenu && (
-              <div className="absolute right-0 mt-2 w-32 bg-slate-800 rounded-lg shadow-lg border border-slate-700 py-1 z-10">
+              <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-slate-800 rounded-lg shadow-lg 
+                              border border-slate-200 dark:border-slate-700 py-1 z-10">
                 <button
                   onClick={handleEdit}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-slate-100 
+                              dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                   ✏️ Edit
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300 transition-colors"
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 
+                              dark:hover:bg-slate-700 hover:text-red-700 dark:hover:text-red-300 transition-colors"
                 >
                   🗑️ Delete
                 </button>
@@ -197,8 +202,9 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
               onChange={(e) => setGoalMinutes(e.target.value)}
               placeholder="Duration in minutes (Optional)"
               min="1"
-              className="w-full bg-slate-700/50 border border-slate-600 rounded-lg px-3 
-              py-2 text-white focus:outline-none focus:border-cyan-500 transition-colors"
+              className="w-full bg-slate-100 dark:bg-slate-700/50 border border-slate-300 
+                          dark:border-slate-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white 
+                          focus:outline-none focus:border-cyan-500 transition-colors"
             />
           </div>
         )}
