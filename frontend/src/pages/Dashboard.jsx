@@ -104,7 +104,8 @@ const Dashboard = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 py-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-100 via-purple-100/20 to-slate-100 
+                        dark:from-slate-900 dark:via-purple-900/20 dark:to-slate-900 py-8 transition-colors duration-300">
             <div className="text-center mb-12 relative">
                 {/* Theme Toggle - Positioned top right */}
                 <div className="absolute top-0 right-0">
@@ -114,7 +115,7 @@ const Dashboard = () => {
                 <h1 className="text-5xl font-extrabold mb-3 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                     Time Fighter
                 </h1>
-                <p className="text-gray-400 dark:text-gray-400 text-lg">
+                <p className="text-gray-600 dark:text-gray-400 text-lg">
                     Track your study sessions across different categories
                 </p>
                 <div className="mt-4 h-1 w-32 mx-auto bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-full"></div>

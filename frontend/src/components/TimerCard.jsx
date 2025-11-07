@@ -141,11 +141,12 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
   return (
     <div className="relative group">
       {/* Gradient border effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-lg 
-      blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 
+                      rounded-lg blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
 
       {/* Card content */}
-      <div className="relative bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-2xl p-6 border border-slate-700/50">
+      <div className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-lg 
+                      shadow-2xl p-6 border border-slate-200 dark:border-slate-700/50">
         {/* Category with gradient */}
         <h3 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4">
           {categoryData?.icon && <span className="text-2xl">{categoryData.icon}</span>}
