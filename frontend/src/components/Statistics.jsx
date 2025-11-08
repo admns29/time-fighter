@@ -1,23 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { getStatistics } from '../api/sessionApi';
 
-const Statistics = () => {
+const Statistics = ({ refreshTrigger }) => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [lastUpdated, setLastUpdated] = useState(null); //Track last update time
 
     useEffect(() => {
         fetchStatistics();
-    }, []);
+    }, [refreshTrigger]); // Re-fetch when refreshTrigger changes
 
     const fetchStatistics = async () => {
         try {
             const data = await getStatistics();
             setStats(data);
+            setLastUpdated(new Date()); // Update last updated time
             setLoading(false);
         } catch (error) {
             console.error('Error loading statistics:', error);
             setLoading(false);
         }
+    };
+
+    //Format last updated time
+    const formatLastUpdated = () => {
+        if (!lastUpdated) return '';
+        const now = new Date();
+        const diff = Math.floor((now - lastUpdated) / 1000); // in seconds
+
+        if (diff < 60) return `${diff} sec ago`;
+        if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+        return lastUpdated.toLocaleTimeString();
     };
 
     // Format seconds to HH:MM:SS
@@ -47,13 +60,61 @@ const Statistics = () => {
         return null;
     }
 
+    if (loading) {
+        return (
+            <div className="mt-12">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent">
+                        Statistics
+                    </h2>
+                </div>
+                <div className="text-center py-12">
+                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent"></div>
+                    <p className="text-gray-600 dark:text-gray-400 mt-4">Loading statistics...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!stats) {
+        return null;
+    }
+
     const maxTime = getMaxTime();
 
     return (
         <div className="mt-12">
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
-                Statistics
-            </h2>
+            {/* Header with Refresh Button */}
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-purple-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent">
+                        Statistics
+                    </h2>
+                    {lastUpdated && (
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                            Last updated: {formatLastUpdated()}
+                        </p>
+                    )}
+                </div>
+
+                {/* Refresh Button */}
+                <button
+                    onClick={fetchStatistics}
+                    disabled={loading}
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Refresh statistics"
+                >
+                    <svg
+                        className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span className="hidden sm:inline">Refresh</span>
+                </button>
+            </div>
 
             {/* Stats Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">

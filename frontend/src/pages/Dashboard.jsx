@@ -18,6 +18,7 @@ const Dashboard = () => {
     const [sessions, setSessions] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [categoryToEdit, setCategoryToEdit] = useState(null);
+    const [statsRefreshTrigger, setStatsRefreshTrigger] = useState(0);
 
     const fetchActiveSession = async () => {
         try {
@@ -25,6 +26,7 @@ const Dashboard = () => {
             console.log("Fetched current session:", session);
             setActiveSession(session);
             await fetchSessions(); // Refresh sessions when active session updates
+            setStatsRefreshTrigger((prev) => prev + 1); // Trigger stats refresh
         } catch (error) {
             console.error("Error fetching current session:", error);
         }
@@ -34,7 +36,7 @@ const Dashboard = () => {
         try {
             const fetchedSessions = await getAllSessions();
             console.log("Fetched all sessions:", fetchedSessions);
-            setSessions(fetchedSessions); // No await needed
+            setSessions(fetchedSessions); // Update state with fetched sessions
         } catch (error) {
             console.error("Error fetching all sessions:", error);
         }
@@ -165,7 +167,7 @@ const Dashboard = () => {
 
             {/* Statistics Section */}
             <div className="mt-12 text-center">
-                <Statistics />
+                <Statistics refreshTrigger={statsRefreshTrigger} />
             </div>
         </div>
     );
