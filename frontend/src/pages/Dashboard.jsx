@@ -136,20 +136,22 @@ const Dashboard = () => {
                 ))}
             </div>
 
-            {/* NEW: Add Category Card */}
+            {/* Add Category Card */}
             <div>
                 <button
                     onClick={handleAddCategory}
-                    className="bg-slate-800/50 backdrop-blur-sm rounded-lg border-2 border-dashed border-slate-600 hover:border-cyan-500 p-6 transition-all hover:bg-slate-700/50 group"
+                    className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-cyan-500 
+                                dark:hover:border-cyan-500 p-6 transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 group"
                 >
-                    <div className="flex flex-col items-center justify-center h-full text-gray-400 group-hover:text-cyan-400 transition-colors">
+                    <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 
+                                    group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                         <span className="text-5xl mb-3">+</span>
                         <span className="text-lg font-semibold">Add Category</span>
                     </div>
                 </button>
             </div>
 
-            {/* NEW: Category Modal */}
+            {/* Category Modal */}
             <CategoryModal
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
