@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import TimerCard from "../components/TimerCard";
 import SessionTable from "../components/SessionTable";
 import { getCurrentSession, getAllSessions } from "../api/sessionApi"; // Add getAllSessions
