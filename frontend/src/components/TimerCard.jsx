@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { startSession, pauseSession, resumeSession, stopSession } from '../api/sessionApi';
 
 const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onEditCategory, onDeleteCategory }) => {
@@ -12,13 +12,14 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
   };
 
   // Calculate progress percentage
-  const calculateProgress = () => {
+  const calculateProgress = useMemo(() => {
     if (!activeSession?.goalDuration || activeSession.goalDuration === 0) {
       return 0; // No goal set
     }
     const progress = (displayTime / activeSession.goalDuration) * 100;
     return Math.min(progress, 100); // Cap at 100%
-  };
+  }, [displayTime, activeSession?.goalDuration]);
+  
 
   // Check if this card has the active session
   const isMySession = activeSession && activeSession.category === category;
@@ -230,18 +231,18 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
                             overflow-hidden border border-slate-300 dark:border-slate-600">
               {/* Progress bar fill */}
               <div
-                className={`h-full rounded-full transition-all duration-300 ${calculateProgress() >= 100
+                className={`h-full rounded-full transition-all duration-300 ${calculateProgress >= 100
                   ? 'bg-gradient-to-r from-green-500 to-emerald-500'
                   : 'bg-gradient-to-r from-cyan-500 to-purple-500'
                   }`}
-                style={{ width: `${calculateProgress()}%` }}
+                style={{ width: `${calculateProgress}%` }}
               >
               </div>
             </div>
 
             {/* Percentage text */}
             <div className="text-center text-sm text-gray-400 mt-1">
-              {calculateProgress().toFixed(0)}%
+              {calculateProgress.toFixed(0)}%
             </div>
           </div>
         )}
@@ -311,4 +312,13 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
   );
 };
 
-export default TimerCard;
+export default React.memo(TimerCard, (prevProps, nextProps) => {
+  // Only re-render if these props change
+  return (
+    prevProps.category === nextProps.category &&
+    prevProps.categoryData?.id === nextProps.categoryData?.id &&
+    prevProps.activeSession?.id === nextProps.activeSession?.id &&
+    prevProps.activeSession?.status === nextProps.activeSession?.status &&
+    prevProps.activeSession?.duration === nextProps.activeSession?.duration
+  );
+});

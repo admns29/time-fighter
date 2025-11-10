@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { getStatistics } from '../api/sessionApi';
 
 const Statistics = ({ refreshTrigger }) => {
@@ -42,11 +42,11 @@ const Statistics = ({ refreshTrigger }) => {
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     };
 
-    // Calculate percentage for progress bars
-    const getMaxTime = () => {
+    // Memoize max time calculation
+    const getMaxTime = useMemo(() => {
         if (!stats?.timePerCategory) return 1;
         return Math.max(...Object.values(stats.timePerCategory), 1);
-    };
+    }, [stats?.timePerCategory]);
 
     if (loading) {
         return (
@@ -80,7 +80,7 @@ const Statistics = ({ refreshTrigger }) => {
         return null;
     }
 
-    const maxTime = getMaxTime();
+    const maxTime = getMaxTime;
 
     return (
         <div className="mt-12">
@@ -180,4 +180,4 @@ const Statistics = ({ refreshTrigger }) => {
         </div>
     );
 };
-export default Statistics;
+export default React.memo(Statistics);
