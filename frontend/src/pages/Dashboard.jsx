@@ -11,6 +11,7 @@ import {
 } from "../api/categoryApi";
 import Statistics from "../components/Statistics";
 import ThemeToggle from "../components/ThemeToggle";
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
     const [categories, setCategories] = useState([]);
@@ -54,14 +55,16 @@ const Dashboard = () => {
         try {
             if (categoryToEdit) {
                 await updateCategory(categoryToEdit.id, categoryData);
+                toast.success('Category updated successfully!');
             } else {
                 await createCategory(categoryData);
+                toast.success('Category created successfully!');
             }
             await fetchCategories();
             setIsModalOpen(false);
             setCategoryToEdit(null);
         } catch (error) {
-            alert('Failed to save category: ' + (error.response?.data?.message || error.message));
+            toast.error('Failed to save category: ' + (error.response?.data?.message || error.message));
         }
     }, [categoryToEdit, fetchCategories]);
 
@@ -83,10 +86,11 @@ const Dashboard = () => {
     const handleDeleteCategory = useCallback(async (categoryId) => {
         try {
             await deleteCategory(categoryId);
+            toast.success('Category deleted successfully!');
             await fetchCategories();
             await fetchActiveSession();
         } catch (error) {
-            alert('Failed to delete category: ' + (error.response?.data?.message || error.message));
+            toast.error('Failed to delete category: ' + (error.response?.data?.message || error.message));
         }
     }, [fetchCategories, fetchActiveSession]);
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { startSession, pauseSession, resumeSession, stopSession } from '../api/sessionApi';
+import toast from 'react-hot-toast';
 
 const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onEditCategory, onDeleteCategory }) => {
   const [displayTime, setDisplayTime] = useState(0);
@@ -19,7 +20,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
     const progress = (displayTime / activeSession.goalDuration) * 100;
     return Math.min(progress, 100); // Cap at 100%
   }, [displayTime, activeSession?.goalDuration]);
-  
+
 
   // Check if this card has the active session
   const isMySession = activeSession && activeSession.category === category;
@@ -55,8 +56,6 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
 
       setDisplayTime(baseDuration);
       setPrevSessionId(activeSession.id);
-      console.log('activeSession goalDuration:', activeSession?.goalDuration);
-      console.log('displayTime initial:', baseDuration);
     }
 
     // ⏸️ If paused, just show the stored duration
@@ -74,7 +73,6 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
 
         // 🎯 Check if goal reached
         if (activeSession.goalDuration && newTime >= activeSession.goalDuration) {
-          console.log('Goal reached! Auto-stopping session');
           handleStop(); // Auto-stop session
           clearInterval(interval); // Stop ticking
           return activeSession.goalDuration; // Cap the display
@@ -95,6 +93,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
       const goalSeconds = goalMinutes ? parseInt(goalMinutes) * 60 : null;
       await startSession(category, goalSeconds);
       await onSessionUpdate();
+      toast.success(`${category} session started!`);
     } catch (error) {
       alert('Failed to start session');
     }
@@ -104,8 +103,9 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
     try {
       await pauseSession(activeSession.id);
       await onSessionUpdate();
+      toast.success(`Session paused!`);
     } catch (error) {
-      alert('Failed to pause session');
+      toast.error('Failed to pause session');
     }
   };
 
@@ -113,8 +113,9 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
     try {
       await resumeSession(activeSession.id);
       await onSessionUpdate();
+      toast.success(`Session resumed!`);
     } catch (error) {
-      alert('Failed to resume session');
+      toast.error('Failed to resume session');
     }
   };
 
@@ -122,8 +123,9 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
     try {
       await stopSession(activeSession.id);
       await onSessionUpdate();
+      toast.success(`Session stopped!`);
     } catch (error) {
-      alert('Failed to stop session');
+      toast.error('Failed to stop session');
     }
   };
 
