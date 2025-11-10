@@ -20,84 +20,75 @@ const Dashboard = () => {
     const [categoryToEdit, setCategoryToEdit] = useState(null);
     const [statsRefreshTrigger, setStatsRefreshTrigger] = useState(0);
 
-    const fetchActiveSession = async () => {
+    // Memoize fetch functions
+    const fetchActiveSession = useCallback(async () => {
         try {
             const session = await getCurrentSession();
-            console.log("Fetched current session:", session);
             setActiveSession(session);
-            await fetchSessions(); // Refresh sessions when active session updates
-            setStatsRefreshTrigger((prev) => prev + 1); // Trigger stats refresh
+            await fetchSessions();
+            setStatsRefreshTrigger(prev => prev + 1);
         } catch (error) {
-            console.error("Error fetching current session:", error);
+            console.error('Error fetching current session:', error);
         }
-    };
+    }, []);
 
-    const fetchSessions = async () => {
+    const fetchSessions = useCallback(async () => {
         try {
             const fetchedSessions = await getAllSessions();
-            console.log("Fetched all sessions:", fetchedSessions);
-            setSessions(fetchedSessions); // Update state with fetched sessions
+            setSessions(fetchedSessions);
         } catch (error) {
-            console.error("Error fetching all sessions:", error);
+            console.error('Error fetching all sessions:', error);
         }
-    };
-    const fetchCategories = async () => {
+    }, []);
+
+    const fetchCategories = useCallback(async () => {
         try {
             const fetchedCategories = await getAllCategories();
             setCategories(fetchedCategories);
         } catch (error) {
-            console.error("Error fetching categories:", error);
+            console.error('Error fetching categories:', error);
         }
-    };
+    }, []);
 
-    const handleSaveCategory = async (categoryData) => {
+    const handleSaveCategory = useCallback(async (categoryData) => {
         try {
             if (categoryToEdit) {
-                // Update existing
                 await updateCategory(categoryToEdit.id, categoryData);
             } else {
-                // Create new
                 await createCategory(categoryData);
             }
-            await fetchCategories(); // Refresh list
+            await fetchCategories();
             setIsModalOpen(false);
             setCategoryToEdit(null);
         } catch (error) {
-            alert(
-                "Failed to save category: " +
-                (error.response?.data?.message || error.message)
-            );
+            alert('Failed to save category: ' + (error.response?.data?.message || error.message));
         }
-    };
+    }, [categoryToEdit, fetchCategories]);
 
-    const handleAddCategory = () => {
+    const handleAddCategory = useCallback(() => {
         setCategoryToEdit(null);
         setIsModalOpen(true);
-    };
+    }, []);
 
-    const handleCloseModal = () => {
+    const handleCloseModal = useCallback(() => {
         setIsModalOpen(false);
         setCategoryToEdit(null);
-    };
+    }, []);
 
-    const handleEditCategory = (category) => {
+    const handleEditCategory = useCallback((category) => {
         setCategoryToEdit(category);
         setIsModalOpen(true);
-    };
+    }, []);
 
-    const handleDeleteCategory = async (categoryId) => {
+    const handleDeleteCategory = useCallback(async (categoryId) => {
         try {
             await deleteCategory(categoryId);
-            await fetchCategories(); // Refresh list
-            // If the deleted category had an active session, refresh that too
+            await fetchCategories();
             await fetchActiveSession();
         } catch (error) {
-            alert(
-                "Failed to delete category: " +
-                (error.response?.data?.message || error.message)
-            );
+            alert('Failed to delete category: ' + (error.response?.data?.message || error.message));
         }
-    };
+    }, [fetchCategories, fetchActiveSession]);
 
     useEffect(() => {
         fetchActiveSession();
