@@ -20,6 +20,7 @@ const Dashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [categoryToEdit, setCategoryToEdit] = useState(null);
     const [statsRefreshTrigger, setStatsRefreshTrigger] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     // Memoize fetch functions
     const fetchActiveSession = useCallback(async () => {
@@ -99,6 +100,32 @@ const Dashboard = () => {
         fetchSessions();
         fetchCategories();
     }, []);
+
+    useEffect(() => {
+        const initializeData = async () => {
+            setLoading(true);
+            await Promise.all([
+                fetchActiveSession(),
+                fetchSessions(),
+                fetchCategories()
+            ]);
+            setLoading(false);
+        };
+
+        initializeData();
+    }, []);
+
+    // loading screen in case data is still loading
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-100 via-purple-100/20 to-slate-100 dark:from-slate-900 dark:via-purple-900/20 dark:to-slate-900 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-cyan-500 border-t-transparent mb-4"></div>
+                    <p className="text-gray-600 dark:text-gray-400 text-lg">Loading Time Fighter...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-100 via-purple-100/20 to-slate-100 
