@@ -28,6 +28,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
   const [prevSessionId, setPrevSessionId] = useState(null);
   const [goalMinutes, setGoalMinutes] = useState(''); // User input for goal
   const [showMenu, setShowMenu] = useState(false);
+  const hasStoppedRef = React.useRef(false);
 
   useEffect(() => {
     if (categoryData?.defaultGoalDuration && !goalMinutes) {
@@ -72,7 +73,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
         const newTime = prev + 1;
 
         // 🎯 Check if goal reached
-        if (activeSession.goalDuration && newTime >= activeSession.goalDuration) {
+        if (activeSession.goalDuration && newTime >= activeSession.goalDuration && !hasStoppedRef.current) {
+          hasStoppedRef.current = true; // ✅ Prevent multiple stops
           handleStop(); // Auto-stop session
           clearInterval(interval); // Stop ticking
           return activeSession.goalDuration; // Cap the display
@@ -124,6 +126,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
       await stopSession(activeSession.id);
       await onSessionUpdate();
       toast.success(`Session stopped!`);
+      console.log('Session stopped due to goal reached or user action.');
     } catch (error) {
       toast.error('Failed to stop session');
     }
