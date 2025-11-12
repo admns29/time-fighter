@@ -136,7 +136,7 @@ const Dashboard = () => {
                     <ThemeToggle />
                 </div>
 
-                <h1 className="text-5xl font-extrabold mb-3 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <h1 className="text-5xl font-extrabold mb-3 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent py-2">
                     Time Fighter
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
