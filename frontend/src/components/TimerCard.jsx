@@ -65,28 +65,27 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
       return;
     }
 
-
-
     // ▶️ Continue timer while active
     const interval = setInterval(() => {
       setDisplayTime(prev => {
-        const newTime = prev + 1;
+        const now = Date.now();
+        const startedAt = new Date(activeSession.startTime).getTime();
+        const elapsed = Math.floor((now - startedAt) / 1000) + activeSession.duration;
 
         // 🎯 Check if goal reached
-        if (activeSession.goalDuration && newTime >= activeSession.goalDuration && !hasStoppedRef.current) {
+        if (activeSession.goalDuration && elapsed >= activeSession.goalDuration && !hasStoppedRef.current) {
           hasStoppedRef.current = true; // ✅ Prevent multiple stops
           handleStop(); // Auto-stop session
-          clearInterval(interval); // Stop ticking
           return activeSession.goalDuration; // Cap the display
         }
 
-        return newTime;
+        return elapsed;
       });
     }, 1000);
 
     return () => clearInterval(interval);
   }, [activeSession?.id, activeSession?.duration, activeSession?.status,
-  activeSession?.goalDuration, isMySession, isActive, prevSessionId]);
+  activeSession?.startTime, isMySession, isActive]);
 
 
   const handleStart = async () => {
@@ -95,6 +94,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
       const goalSeconds = goalMinutes ? parseInt(goalMinutes) * 60 : null;
       await startSession(category, goalSeconds);
       await onSessionUpdate();
+      hasStoppedRef.current = false; // Reset stop flag
       toast.success(`${category} session started!`);
     } catch (error) {
       alert('Failed to start session');
