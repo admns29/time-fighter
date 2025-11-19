@@ -1,103 +1,37 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { startSession, pauseSession, resumeSession, stopSession } from '../api/sessionApi';
 import toast from 'react-hot-toast';
+import { useTimer } from '../hooks/useTimer';
 
 const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onEditCategory, onDeleteCategory }) => {
-  const [displayTime, setDisplayTime] = useState(0);
-
-  const formatTime = (seconds) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  };
-
-  // Calculate progress percentage
-  const calculateProgress = useMemo(() => {
-    if (!activeSession?.goalDuration || activeSession.goalDuration === 0) {
-      return 0; // No goal set
-    }
-    const progress = (displayTime / activeSession.goalDuration) * 100;
-    return Math.min(progress, 100); // Cap at 100%
-  }, [displayTime, activeSession?.goalDuration]);
-
-
-  // Check if this card has the active session
-  const isMySession = activeSession && activeSession.category === category;
-  const isActive = isMySession && activeSession.status === 'ACTIVE';
-  const [prevSessionId, setPrevSessionId] = useState(null);
-  const [goalMinutes, setGoalMinutes] = useState(''); // User input for goal
+  const [goalMinutes, setGoalMinutes] = useState('');
   const [showMenu, setShowMenu] = useState(false);
-  const hasStoppedRef = React.useRef(false);
 
-  useEffect(() => {
-    if (categoryData?.defaultGoalDuration && !goalMinutes) {
-      setGoalMinutes(Math.floor(categoryData.defaultGoalDuration / 60)); // Convert seconds to minutes
+  const isMySession = activeSession && activeSession.category === category;
+
+  // Memoize handleStop to prevent stale closure
+  const handleStop = useCallback(async () => {
+    if (!activeSession?.id) return;
+
+    try {
+      await stopSession(activeSession.id);
+      await onSessionUpdate();
+      toast.success('Session completed! 🎉');
+    } catch (error) {
+      toast.error('Failed to stop session');
     }
-  }, [categoryData]);
+  }, [activeSession?.id, onSessionUpdate]);
 
-  useEffect(() => {
-    if (!isMySession) {
-      setDisplayTime(0);
-      setPrevSessionId(null);
-      return;
-    }
-
-    // 🕒 If a new or resumed session is detected
-    if (activeSession.id !== prevSessionId) {
-      let baseDuration = activeSession.duration;
-
-      // 💡 If the session is ACTIVE, calculate time elapsed since startTime
-      if (activeSession.status === 'ACTIVE' && activeSession.startTime) {
-        const now = new Date();
-        const startedAt = new Date(activeSession.startTime);
-        const elapsedSinceStart = Math.floor((now - startedAt) / 1000);
-        baseDuration += elapsedSinceStart;
-      }
-
-      setDisplayTime(baseDuration);
-      setPrevSessionId(activeSession.id);
-    }
-
-    // ⏸️ If paused, just show the stored duration
-    if (!isActive) {
-      setDisplayTime(activeSession.duration);
-      return;
-    }
-
-    // ▶️ Continue timer while active
-    const interval = setInterval(() => {
-      setDisplayTime(prev => {
-        const now = Date.now();
-        const startedAt = new Date(activeSession.startTime).getTime();
-        const elapsed = Math.floor((now - startedAt) / 1000) + activeSession.duration;
-
-        // 🎯 Check if goal reached
-        if (activeSession.goalDuration && elapsed >= activeSession.goalDuration && !hasStoppedRef.current) {
-          hasStoppedRef.current = true; // ✅ Prevent multiple stops
-          handleStop(); // Auto-stop session
-          return activeSession.goalDuration; // Cap the display
-        }
-
-        return elapsed;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [activeSession?.id, activeSession?.duration, activeSession?.status,
-  activeSession?.startTime, isMySession, isActive]);
-
+  const { displayTime, formatTime, calculateProgress, isActive } = useTimer(activeSession, isMySession, handleStop);
 
   const handleStart = async () => {
     try {
-      //Convert minutes to seconds
       const goalSeconds = goalMinutes ? parseInt(goalMinutes) * 60 : null;
       await startSession(category, goalSeconds);
       await onSessionUpdate();
-      hasStoppedRef.current = false; // Reset stop flag
       toast.success(`${category} session started!`);
     } catch (error) {
-      alert('Failed to start session');
+      toast.error('Failed to start session');
     }
   };
 
@@ -105,7 +39,7 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
     try {
       await pauseSession(activeSession.id);
       await onSessionUpdate();
-      toast.success(`Session paused!`);
+      toast.success('Session paused');
     } catch (error) {
       toast.error('Failed to pause session');
     }
@@ -115,20 +49,9 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
     try {
       await resumeSession(activeSession.id);
       await onSessionUpdate();
-      toast.success(`Session resumed!`);
+      toast.success('Session resumed');
     } catch (error) {
       toast.error('Failed to resume session');
-    }
-  };
-
-  const handleStop = async () => {
-    try {
-      await stopSession(activeSession.id);
-      await onSessionUpdate();
-      toast.success(`Session stopped!`);
-      console.log('Session stopped due to goal reached or user action.');
-    } catch (error) {
-      toast.error('Failed to stop session');
     }
   };
 
@@ -143,6 +66,13 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
     }
     setShowMenu(false);
   };
+
+  // Set default goal from category
+  useEffect(() => {
+    if (categoryData?.defaultGoalDuration && !goalMinutes) {
+      setGoalMinutes(Math.floor(categoryData.defaultGoalDuration / 60));
+    }
+  }, [categoryData, goalMinutes]);
 
   return (
     <div className="relative group">
