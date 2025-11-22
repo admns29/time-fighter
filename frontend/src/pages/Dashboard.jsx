@@ -13,7 +13,10 @@ import Statistics from "../components/Statistics";
 import ThemeToggle from "../components/ThemeToggle";
 import toast from 'react-hot-toast';
 
+import { useAuth } from "../context/AuthContext";
+
 const Dashboard = () => {
+    const { logout } = useAuth();
     const [categories, setCategories] = useState([]);
     const [activeSession, setActiveSession] = useState(null);
     const [sessions, setSessions] = useState([]);
@@ -131,9 +134,20 @@ const Dashboard = () => {
         <div className="min-h-screen bg-gradient-to-br from-slate-100 via-purple-100/20 to-slate-100 
                         dark:from-slate-900 dark:via-purple-900/20 dark:to-slate-900 py-8 transition-colors duration-300">
             <div className="text-center mb-12 relative">
-                {/* Theme Toggle - Positioned top right */}
-                <div className="absolute top-0 right-0">
+                {/* Theme Toggle & Logout - Positioned top right */}
+                <div className="absolute top-0 right-0 flex gap-2 m-4">
                     <ThemeToggle />
+                    <button
+                        onClick={logout}
+                        className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm p-2 rounded-lg 
+                                   text-gray-600 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 
+                                   transition-colors border border-slate-200 dark:border-slate-700"
+                        title="Logout"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                        </svg>
+                    </button>
                 </div>
 
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 
