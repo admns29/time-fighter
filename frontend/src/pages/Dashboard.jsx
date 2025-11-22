@@ -149,7 +149,7 @@ const Dashboard = () => {
             </div>
 
             {/* Timer Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 max-w-4xl md:grid-cols-2 lg:grid-cols-3 gap-10 p-6 mx-auto max-w-7xl">
                 {categories.map((category) => (
                     <TimerCard
                         key={category.id}
@@ -164,7 +164,7 @@ const Dashboard = () => {
             </div>
 
             {/* Add Category Card */}
-            <div>
+            <div className="flex justify-center mx-6">
                 <button
                     onClick={handleAddCategory}
                     className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-cyan-500 
@@ -186,12 +186,12 @@ const Dashboard = () => {
                 categoryToEdit={categoryToEdit}
             />
             {/* Session History Section */}
-            <div className="mt-8 text-center">
+            <div className="overflow-x-auto mx-6 mt-8 text-center">
                 <SessionTable sessions={sessions} />
             </div>
 
             {/* Statistics Section */}
-            <div className="mt-12 text-center">
+            <div className="justify-center p-6 mx-6 mt-12 text-center">
                 <Statistics refreshTrigger={statsRefreshTrigger} />
             </div>
         </div>

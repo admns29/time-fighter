@@ -78,7 +78,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
     <div className="relative group">
       {/* Gradient border effect */}
       <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 
-                      rounded-lg blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+                      rounded-lg blur opacity-30 group-hover:opacity-60 transition duration-300">
+      </div>
 
       {/* Card content */}
       <div className="relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-lg 
