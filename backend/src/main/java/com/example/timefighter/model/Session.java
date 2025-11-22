@@ -27,6 +27,10 @@ public class Session {
     
     @Column(nullable = false)
     private String status; // ACTIVE, PAUSED, COMPLETED
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
     
     public Session() {}
     
@@ -91,5 +95,13 @@ public class Session {
     
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

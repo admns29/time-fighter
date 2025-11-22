@@ -22,6 +22,10 @@ public class Category {
     @Column(nullable = true)
     private Long defaultGoalDuration;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public Category() {}
 
     public Category(String name, String color, String icon, Long defaultGoalDuration) {
@@ -71,7 +75,11 @@ public class Category {
         this.defaultGoalDuration = defaultGoalDuration;
     }
 
+    public User getUser() {
+        return user;
+    }
 
-
-
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
