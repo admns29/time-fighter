@@ -46,9 +46,15 @@ const Dashboard = () => {
     const fetchCategories = useCallback(async () => {
         try {
             const fetchedCategories = await getAllCategories();
-            setCategories(fetchedCategories);
+            if (Array.isArray(fetchedCategories)) {
+                setCategories(fetchedCategories);
+            } else {
+                console.error("Fetched categories is not an array:", fetchedCategories);
+                setCategories([]);
+            }
         } catch (error) {
             console.error('Error fetching categories:', error);
+            setCategories([]);
         }
     }, []);
 
@@ -94,12 +100,6 @@ const Dashboard = () => {
             toast.error('Failed to delete category: ' + (error.response?.data?.message || error.message));
         }
     }, [fetchCategories, fetchActiveSession]);
-
-    useEffect(() => {
-        fetchActiveSession();
-        fetchSessions();
-        fetchCategories();
-    }, []);
 
     useEffect(() => {
         const initializeData = async () => {

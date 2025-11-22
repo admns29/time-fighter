@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './axiosConfig';
 
 // Base URL for API (Vite proxy will forward /api to http://localhost:8080/api)
 const API_BASE_URL = '/api/sessions';
@@ -10,7 +10,7 @@ export const startSession = async (category, goalDuration = null) => {
   try {
     const body = { category };
     if (goalDuration != null) body.goalDuration = goalDuration;
-    const response = await axios.post(`${API_BASE_URL}/start`, body);
+    const response = await api.post(`${API_BASE_URL}/start`, body);
     return response.data;
   } catch (error) {
     console.error('Error starting session:', error);
@@ -23,7 +23,7 @@ export const startSession = async (category, goalDuration = null) => {
 // Returns: Promise with updated session data
 export const pauseSession = async (sessionId) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/${sessionId}/pause`);
+    const response = await api.put(`${API_BASE_URL}/${sessionId}/pause`);
     return response.data;
   } catch (error) {
     console.error('Error pausing session:', error);
@@ -34,7 +34,7 @@ export const pauseSession = async (sessionId) => {
 // Resume a paused session
 export const resumeSession = async (sessionId) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/${sessionId}/resume`);
+    const response = await api.put(`${API_BASE_URL}/${sessionId}/resume`);
     return response.data;
   } catch (error) {
     console.error('Error resuming session:', error);
@@ -45,7 +45,7 @@ export const resumeSession = async (sessionId) => {
 // Stop/complete a session
 export const stopSession = async (sessionId) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/${sessionId}/stop`);
+    const response = await api.put(`${API_BASE_URL}/${sessionId}/stop`);
     return response.data;
   } catch (error) {
     console.error('Error stopping session:', error);
@@ -56,7 +56,7 @@ export const stopSession = async (sessionId) => {
 // Get all sessions (for history)
 export const getAllSessions = async () => {
   try {
-    const response = await axios.get(API_BASE_URL);
+    const response = await api.get(API_BASE_URL);
     return response.data;
   } catch (error) {
     console.error('Error fetching sessions:', error);
@@ -67,7 +67,7 @@ export const getAllSessions = async () => {
 // Get the current session (active or paused)
 export const getCurrentSession = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/current`);
+    const response = await api.get(`${API_BASE_URL}/current`);
     return response.data;
   } catch (error) {
     if (error.response?.status === 404) {
@@ -82,7 +82,7 @@ export const getCurrentSession = async () => {
 // Set goal duration for a session
 export const setGoalDuration = async (sessionId, goalDuration = null) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/${sessionId}/goal`, {
+    const response = await api.post(`${API_BASE_URL}/${sessionId}/goal`, {
       goalDuration 
     });
     return response.data;
@@ -95,7 +95,7 @@ export const setGoalDuration = async (sessionId, goalDuration = null) => {
 // Get statistics
 export const getStatistics = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/statistics`);
+    const response = await api.get(`${API_BASE_URL}/statistics`);
     return response.data;
   } catch (error) {
     console.error('Error fetching statistics:', error);
