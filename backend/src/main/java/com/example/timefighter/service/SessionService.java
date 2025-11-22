@@ -6,6 +6,7 @@ import com.example.timefighter.model.User;
 import com.example.timefighter.repository.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class SessionService {
 
     @Autowired
@@ -54,25 +56,14 @@ public class SessionService {
         }
 
         session.setEndTime(LocalDateTime.now());
-        session.setStatus("COMPLETED");
         
-        if (session.getStartTime() != null && session.getEndTime() != null) {
-             // Simple duration calculation for now. In a real app, handle pause intervals.
-             long seconds = Duration.between(session.getStartTime(), session.getEndTime()).getSeconds();
-             // Use existing duration if accumulated during pauses, or just overwrite for now
-             // Ideally, we should track accumulated active time.
-             // For this MVP, let's assume duration is updated by frontend or we just take the diff
-             // But wait, if paused, start time is old.
-             // Let's rely on what was set before or just add the final segment?
-             // The simplest robust way for MVP without complex pause tracking:
-             // If we assume the frontend sends updates, we trust it.
-             // But here we are stopping.
-             // Let's just set it to the diff for now, acknowledging pause inaccuracy.
-             if (session.getDuration() == 0) {
-                 session.setDuration(seconds);
-             }
+        // If active, add the final segment duration
+        if ("ACTIVE".equals(session.getStatus()) && session.getStartTime() != null) {
+             long currentSegmentDuration = Duration.between(session.getStartTime(), session.getEndTime()).getSeconds();
+             session.setDuration((session.getDuration() == null ? 0 : session.getDuration()) + currentSegmentDuration);
         }
 
+        session.setStatus("COMPLETED");
         return sessionRepository.save(session);
     }
     
@@ -84,6 +75,13 @@ public class SessionService {
              throw new RuntimeException("Session is not active");
         }
         
+        // Calculate duration for the current active segment
+        if (session.getStartTime() != null) {
+            long currentSegmentDuration = Duration.between(session.getStartTime(), LocalDateTime.now()).getSeconds();
+            session.setDuration((session.getDuration() == null ? 0 : session.getDuration()) + currentSegmentDuration);
+        }
+        
+        session.setStartTime(LocalDateTime.now()); // Start new segment
         session.setStatus("PAUSED");
         return sessionRepository.save(session);
     }
@@ -96,6 +94,7 @@ public class SessionService {
              throw new RuntimeException("Session is not paused");
         }
         
+        session.setStartTime(LocalDateTime.now()); // Start new segment
         session.setStatus("ACTIVE");
         return sessionRepository.save(session);
     }

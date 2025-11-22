@@ -23,7 +23,7 @@ export const startSession = async (category, goalDuration = null) => {
 // Returns: Promise with updated session data
 export const pauseSession = async (sessionId) => {
   try {
-    const response = await api.put(`${API_BASE_URL}/${sessionId}/pause`);
+    const response = await api.post(`${API_BASE_URL}/${sessionId}/pause`);
     return response.data;
   } catch (error) {
     console.error('Error pausing session:', error);
@@ -34,7 +34,7 @@ export const pauseSession = async (sessionId) => {
 // Resume a paused session
 export const resumeSession = async (sessionId) => {
   try {
-    const response = await api.put(`${API_BASE_URL}/${sessionId}/resume`);
+    const response = await api.post(`${API_BASE_URL}/${sessionId}/resume`);
     return response.data;
   } catch (error) {
     console.error('Error resuming session:', error);
@@ -45,7 +45,7 @@ export const resumeSession = async (sessionId) => {
 // Stop/complete a session
 export const stopSession = async (sessionId) => {
   try {
-    const response = await api.put(`${API_BASE_URL}/${sessionId}/stop`);
+    const response = await api.post(`${API_BASE_URL}/${sessionId}/stop`);
     return response.data;
   } catch (error) {
     console.error('Error stopping session:', error);

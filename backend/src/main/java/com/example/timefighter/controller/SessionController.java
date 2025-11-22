@@ -44,26 +44,43 @@ public class SessionController {
     }
 
     @PostMapping("/start")
-    public Session startSession(@RequestBody Map<String, Object> payload, @AuthenticationPrincipal UserDetails userDetails) {
-        String category = (String) payload.get("category");
-        Long goalDuration = payload.get("goalDuration") != null ? ((Number) payload.get("goalDuration")).longValue() : null;
-        User user = getUser(userDetails);
-        return sessionService.startSession(category, goalDuration, user);
+    public ResponseEntity<?> startSession(@RequestBody Map<String, Object> payload, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String category = (String) payload.get("category");
+            Long goalDuration = payload.get("goalDuration") != null ? ((Number) payload.get("goalDuration")).longValue() : null;
+            User user = getUser(userDetails);
+            return ResponseEntity.ok(sessionService.startSession(category, goalDuration, user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/{id}/stop")
-    public Session stopSession(@PathVariable Long id) {
-        return sessionService.stopSession(id);
+    public ResponseEntity<?> stopSession(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(sessionService.stopSession(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
     
     @PostMapping("/{id}/pause")
-    public Session pauseSession(@PathVariable Long id) {
-        return sessionService.pauseSession(id);
+    public ResponseEntity<?> pauseSession(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(sessionService.pauseSession(id));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error pausing session: " + e.getMessage());
+        }
     }
     
     @PostMapping("/{id}/resume")
-    public Session resumeSession(@PathVariable Long id) {
-        return sessionService.resumeSession(id);
+    public ResponseEntity<?> resumeSession(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(sessionService.resumeSession(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/current")
