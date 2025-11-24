@@ -1,16 +1,19 @@
 package com.example.timefighter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "categories", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"name", "user_id"})
+})
 public class Category {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique=true)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = true)
@@ -21,6 +24,11 @@ public class Category {
 
     @Column(nullable = true)
     private Long defaultGoalDuration;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
 
     public Category() {}
 
@@ -71,7 +79,11 @@ public class Category {
         this.defaultGoalDuration = defaultGoalDuration;
     }
 
+    public User getUser() {
+        return user;
+    }
 
-
-
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

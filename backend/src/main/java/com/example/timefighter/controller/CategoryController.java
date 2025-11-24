@@ -1,51 +1,69 @@
 package com.example.timefighter.controller;
 
-import java.util.List;
-
-import org.springframework.http.HttpStatus;
+import com.example.timefighter.model.Category;
+import com.example.timefighter.model.User;
+import com.example.timefighter.repository.UserRepository;
+import com.example.timefighter.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.timefighter.dto.CategoryRequestDTO;
-import com.example.timefighter.dto.CategoryResponseDTO;
-import com.example.timefighter.service.CategoryService;
-
-import jakarta.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
+@CrossOrigin(origins = "*")
 public class CategoryController {
-    
-    private final CategoryService categoryService;
-    
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private User getUser(UserDetails userDetails) {
+        return userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @GetMapping
-    public List<CategoryResponseDTO> getAllCategories() {
-        return categoryService.getAllCategories();
+    public List<Category> getAllCategories(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = getUser(userDetails);
+        return categoryService.getAllCategories(user);
     }
 
     @GetMapping("/{id}")
-    public CategoryResponseDTO getCategoryById(@PathVariable Long id) {
-        return categoryService.getCategoryById(id);
+    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+        return categoryService.getCategoryById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CategoryResponseDTO createCategory(@Valid @RequestBody CategoryRequestDTO dto) {
-        return categoryService.createCategory(dto);
+    public Category createCategory(@RequestBody Category category, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = getUser(userDetails);
+        return categoryService.createCategory(category, user);
     }
 
     @PutMapping("/{id}")
-    public CategoryResponseDTO updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequestDTO dto) {
-        return categoryService.updateCategory(id, dto);
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category categoryDetails) {
+        try {
+            Category updatedCategory = categoryService.updateCategory(id, categoryDetails);
+            return ResponseEntity.ok(updatedCategory);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategory(id);
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        try {
+            categoryService.deleteCategory(id);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
-
 }

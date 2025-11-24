@@ -1,5 +1,6 @@
 package com.example.timefighter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -27,6 +28,11 @@ public class Session {
     
     @Column(nullable = false)
     private String status; // ACTIVE, PAUSED, COMPLETED
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
     
     public Session() {}
     
@@ -91,5 +97,13 @@ public class Session {
     
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
