@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Dashboard from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import PomodoroPage from './pages/PomodoroPage';
 import { Toaster } from 'react-hot-toast';
 
 const PrivateRoute = ({ children }) => {
@@ -29,6 +30,14 @@ function App() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/pomodoro"
+              element={
+                <PrivateRoute>
+                  <PomodoroPage />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/"
               element={
