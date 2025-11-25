@@ -23,6 +23,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Main Security Configuration class for the application.
+ * This class configures how the application handles authentication and authorization.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -33,24 +37,42 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    /**
+     * Configures the Security Filter Chain.
+     * This is the core of Spring Security. It defines which requests need authentication,
+     * how sessions are managed (stateless for JWT), and adds our custom JWT filter.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            // Enable CORS (Cross-Origin Resource Sharing) to allow frontend requests
             .cors(Customizer.withDefaults())
+            // Disable CSRF (Cross-Site Request Forgery) because we use stateless JWTs
             .csrf(csrf -> csrf.disable())
+            // Define URL authorization rules
             .authorizeHttpRequests(auth -> auth
+                // Allow anyone to access auth endpoints (login/register)
                 .requestMatchers("/api/auth/**").permitAll()
+                // Require authentication for all other requests
                 .anyRequest().authenticated()
             )
+            // Set session management to STATELESS because we don't use server-side sessions
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            // Set the authentication provider
             .authenticationProvider(authenticationProvider())
+            // Add our custom JWT filter before the standard UsernamePasswordAuthenticationFilter
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    /**
+     * Configures CORS settings.
+     * This tells the browser that it's okay for our frontend (localhost:3000)
+     * to make requests to this backend (localhost:8080).
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -64,6 +86,11 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * Configures the AuthenticationProvider.
+     * We use DaoAuthenticationProvider which fetches user details from a database
+     * and checks passwords using the configured PasswordEncoder.
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -77,6 +104,11 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Configures the PasswordEncoder.
+     * BCrypt is a strong hashing function. We use it to hash passwords before saving them
+     * to the database, so we never store plain text passwords.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
