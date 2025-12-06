@@ -20,9 +20,16 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // The secret key used to sign the tokens. 
-    // It is injected from application.properties for security.
-    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    @org.springframework.beans.factory.annotation.Value("${jwt.secret}")
+    private String secret;
+
+    @org.springframework.beans.factory.annotation.Value("${jwt.expiration}")
+    private long expiration;
+
+    private Key getSignInKey() {
+        byte[] keyBytes = io.jsonwebtoken.io.Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
     /**
      * Extracts the username (subject) from the token.
@@ -51,7 +58,7 @@ public class JwtUtil {
      * This method will throw an exception if the token is invalid or expired.
      */
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
     }
 
     /**
@@ -75,8 +82,8 @@ public class JwtUtil {
      */
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Token valid for 10 hours
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
     }
 
     /**
