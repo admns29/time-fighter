@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../api/axiosConfig';
 
 // Create the context. This is like a global state container for authentication data.
 const AuthContext = createContext(null);
@@ -16,13 +16,27 @@ export const AuthProvider = ({ children }) => {
 
     // Effect to restore user session on app load
     useEffect(() => {
-        if (token) {
-            // In a real app, you would validate the token with the backend here.
-            // For this demo, we just assume if a token exists, the user is logged in.
-            const username = localStorage.getItem('username');
-            setUser({ username });
-        }
-        setLoading(false); // Finished loading auth state
+        const initializeAuth = async () => {
+            if (token) {
+                try {
+                    // Validate token with backend
+                    const response = await api.get('/api/auth/validate');
+                    // If successful, update user state
+                    // Note: response.data.username comes from AuthResponse
+                    setUser({ username: response.data.username });
+                } catch (error) {
+                    console.error("Token validation failed", error);
+                    // If validation fails, clear storage
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('username');
+                    setToken(null);
+                    setUser(null);
+                }
+            }
+            setLoading(false); // Finished loading auth state
+        };
+
+        initializeAuth();
     }, [token]);
 
     /**
@@ -31,7 +45,7 @@ export const AuthProvider = ({ children }) => {
      */
     const login = async (username, password) => {
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
+            const response = await api.post('/api/auth/login', {
                 username,
                 password
             });
@@ -57,7 +71,7 @@ export const AuthProvider = ({ children }) => {
      */
     const register = async (username, email, password) => {
         try {
-            await axios.post('http://localhost:8080/api/auth/register', {
+            await api.post('/api/auth/register', {
                 username,
                 email,
                 password
