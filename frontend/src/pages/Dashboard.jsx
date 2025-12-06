@@ -163,7 +163,7 @@ const Dashboard = () => {
             </div>
 
             {/* Timer Cards Grid */}
-            <div className="grid grid-cols-1 max-w-4xl md:grid-cols-2 lg:grid-cols-3 gap-10 p-6 mx-auto max-w-7xl">
+            <div className="grid grid-cols-1 max-w-4xl md:grid-cols-2 lg:grid-cols-3 gap-10 p-6 mx-auto lg:max-w-7xl">
                 {categories.map((category) => (
                     <TimerCard
                         key={category.id}
@@ -201,6 +201,7 @@ const Dashboard = () => {
             <div className="flex justify-center mx-6">
                 <button
                     onClick={handleAddCategory}
+                    aria-label="Add Category"
                     className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-cyan-500 
                                 dark:hover:border-cyan-500 p-6 transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 group"
                 >
