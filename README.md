@@ -7,6 +7,7 @@ A modern, full-stack study time tracker with goal-setting, progress visualizatio
 ## ✨ Features
 
 ### 🎯 Core Functionality
+
 - **Multi-User Support** - Secure login and registration with private data isolation
 - **Multi-Category Tracking** - Track time across different study categories
 - **Session Management** - Start, pause, resume, and stop study sessions
@@ -14,12 +15,14 @@ A modern, full-stack study time tracker with goal-setting, progress visualizatio
 - **Goal Setting** - Set time goals for each session with visual progress bars
 
 ### 📊 Analytics & Statistics
+
 - **Real-time Statistics** - View today's study time, weekly totals, and streaks
 - **Category Breakdown** - Visual progress bars showing time per category
 - **Most Studied Category** - See which topics you focus on most
 - **Streak Tracking** - Maintain consistency with daily streak counter
 
 ### 🎨 Customization
+
 - **Custom Categories** - Create, edit, and delete study categories
 - **Icon & Color Selection** - Personalize categories with emojis and colors
 - **Default Goals** - Set default study goals per category
@@ -30,6 +33,7 @@ A modern, full-stack study time tracker with goal-setting, progress visualizatio
 ## 🚀 Tech Stack
 
 ### Backend
+
 - **Java 17** - Modern Java features
 - **Spring Boot 3.x** - REST API framework
 - **Spring Security + JWT** - Stateless authentication
@@ -39,6 +43,7 @@ A modern, full-stack study time tracker with goal-setting, progress visualizatio
 - **Maven** - Dependency management
 
 ### Frontend
+
 - **React 18** - UI framework
 - **Vite** - Build tool and dev server
 - **Tailwind CSS** - Utility-first styling
@@ -52,6 +57,7 @@ A modern, full-stack study time tracker with goal-setting, progress visualizatio
 ## 📦 Installation
 
 ### Prerequisites
+
 - **Java 17+** installed
 - **Node.js 18+** and npm installed
 - **Maven 3.6+** installed
@@ -59,12 +65,14 @@ A modern, full-stack study time tracker with goal-setting, progress visualizatio
 ### Backend Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/time-fighter.git
 cd time-fighter
 ```
 
 2. Navigate to backend and run:
+
 ```bash
 cd backend
 mvn clean install
@@ -76,12 +84,14 @@ Backend will start on `http://localhost:8080`
 ### Frontend Setup
 
 1. Navigate to frontend directory:
+
 ```bash
 cd frontend
 npm install
 ```
 
 2. Start development server:
+
 ```bash
 npm run dev
 ```
@@ -95,7 +105,9 @@ Frontend will start on `http://localhost:3000`
 We love contributions! This project is designed to be beginner-friendly.
 
 ### 🌱 Good First Issues
+
 If you are new to open source, here are some ideas to get started:
+
 - **UI Polish**: Improve the spacing or colors in the Dashboard.
 - **New Icons**: Add more emoji options for categories.
 - **Tooltips**: Add hover tooltips to buttons explaining what they do.
@@ -105,23 +117,28 @@ If you are new to open source, here are some ideas to get started:
 ### 📝 How to Contribute
 
 1.  **Fork the repository**
+
     - Click the "Fork" button at the top right of this page.
 
 2.  **Clone your fork**
+
     ```bash
     git clone https://github.com/YOUR_USERNAME/time-fighter.git
     ```
 
 3.  **Create a branch**
+
     ```bash
     git checkout -b feature/my-new-feature
     ```
 
 4.  **Make your changes**
+
     - Write your code.
     - Test your changes.
 
 5.  **Commit and Push**
+
     ```bash
     git add .
     git commit -m "Add my new feature"
@@ -139,12 +156,14 @@ If you are new to open source, here are some ideas to get started:
 ### Database Configuration
 
 **Development (H2):**
+
 ```properties
 spring.datasource.url=jdbc:h2:mem:timefighterdb
 spring.h2.console.enabled=true
 ```
 
 **Production (MySQL):**
+
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/timefighter
 spring.datasource.username=your_username
@@ -152,6 +171,7 @@ spring.datasource.password=your_password
 ```
 
 ### JWT Configuration
+
 The app uses a default secret for development. For production, set the `JWT_SECRET` environment variable.
 
 ---
@@ -161,5 +181,3 @@ The app uses a default secret for development. For production, set the `JWT_SECR
 This project is open source and available under the MIT License.
 
 ---
-
-**Made with ❤️ and ☕**
