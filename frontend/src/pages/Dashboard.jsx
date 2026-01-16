@@ -163,7 +163,7 @@ const Dashboard = () => {
             </div>
 
             {/* Timer Cards Grid */}
-            <div className="grid grid-cols-1 max-w-4xl md:grid-cols-2 lg:grid-cols-3 gap-10 p-6 mx-auto max-w-7xl">
+            <div className="grid grid-cols-1 max-w-4xl md:grid-cols-2 lg:grid-cols-3 gap-10 p-6 mx-auto lg:max-w-7xl">
                 {categories.map((category) => (
                     <TimerCard
                         key={category.id}
@@ -177,10 +177,31 @@ const Dashboard = () => {
                 ))}
             </div>
 
+            {/* Navigation to Pomodoro */}
+            <div className="flex justify-center mb-8">
+                <a
+                    href="/pomodoro"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/80 dark:bg-slate-800/80 
+                             backdrop-blur-sm border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl 
+                             transform hover:-translate-y-1 transition-all duration-300 group"
+                >
+                    <span className="text-2xl">🍅</span>
+                    <span className="font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent 
+                                   group-hover:scale-105 transition-transform">
+                        Open Pomodoro Timer
+                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"
+                        className="w-5 h-5 text-orange-500 group-hover:translate-x-1 transition-transform">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                </a>
+            </div>
+
             {/* Add Category Card */}
             <div className="flex justify-center mx-6">
                 <button
                     onClick={handleAddCategory}
+                    aria-label="Add Category"
                     className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-cyan-500 
                                 dark:hover:border-cyan-500 p-6 transition-all hover:bg-slate-100 dark:hover:bg-slate-700/50 group"
                 >

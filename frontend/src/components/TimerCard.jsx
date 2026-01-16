@@ -96,7 +96,8 @@ const TimerCard = ({ category, categoryData, activeSession, onSessionUpdate, onE
           <div className="relative">
             <button
               onClick={() => setShowMenu(!showMenu)}
-              className="ttext-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white p-1 
+              aria-label="Options"
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white p-1 
                         rounded hover:bg-slate-200 dark:hover:bg-slate-700/50 transition-colors"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

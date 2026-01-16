@@ -63,4 +63,12 @@ public class AuthController {
 
         return ResponseEntity.ok("User registered successfully!");
     }
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body("Invalid token");
+        }
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return ResponseEntity.ok(new AuthResponse(null, userDetails.getUsername()));
+    }
 }

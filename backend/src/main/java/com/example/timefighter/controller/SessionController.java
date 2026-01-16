@@ -14,9 +14,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST Controller for handling Session-related API requests.
+ * This class exposes endpoints that the Frontend can call to manage sessions.
+ * 
+ * @RestController indicates that this class handles HTTP requests and returns JSON responses.
+ * @RequestMapping("/api/sessions") sets the base URL for all endpoints in this class.
+ */
 @RestController
 @RequestMapping("/api/sessions")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*") // Allows requests from any domain (useful for development)
 public class SessionController {
 
     @Autowired
@@ -25,17 +32,29 @@ public class SessionController {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Helper method to retrieve the User entity from the authenticated UserDetails.
+     * UserDetails is provided by Spring Security.
+     */
     private User getUser(UserDetails userDetails) {
         return userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    /**
+     * GET /api/sessions
+     * Retrieves all sessions for the currently logged-in user.
+     */
     @GetMapping
     public List<Session> getAllSessions(@AuthenticationPrincipal UserDetails userDetails) {
         User user = getUser(userDetails);
         return sessionService.getAllSessions(user);
     }
 
+    /**
+     * GET /api/sessions/statistics
+     * Calculates and returns statistics (streak, total time, etc.) for the user.
+     */
     @GetMapping("/statistics")
     public ResponseEntity<StatisticsDTO> getStatistics(@AuthenticationPrincipal UserDetails userDetails) {
         User user = getUser(userDetails);
@@ -43,10 +62,15 @@ public class SessionController {
         return ResponseEntity.ok(stats);
     }
 
+    /**
+     * POST /api/sessions/start
+     * Starts a new session. Expects a JSON body with 'category' and optional 'goalDuration'.
+     */
     @PostMapping("/start")
     public ResponseEntity<?> startSession(@RequestBody Map<String, Object> payload, @AuthenticationPrincipal UserDetails userDetails) {
         try {
             String category = (String) payload.get("category");
+            // Safely cast the number to Long
             Long goalDuration = payload.get("goalDuration") != null ? ((Number) payload.get("goalDuration")).longValue() : null;
             User user = getUser(userDetails);
             return ResponseEntity.ok(sessionService.startSession(category, goalDuration, user));
@@ -55,6 +79,10 @@ public class SessionController {
         }
     }
 
+    /**
+     * POST /api/sessions/{id}/stop
+     * Stops the session with the given ID.
+     */
     @PostMapping("/{id}/stop")
     public ResponseEntity<?> stopSession(@PathVariable Long id) {
         try {
@@ -64,6 +92,10 @@ public class SessionController {
         }
     }
     
+    /**
+     * POST /api/sessions/{id}/pause
+     * Pauses the session.
+     */
     @PostMapping("/{id}/pause")
     public ResponseEntity<?> pauseSession(@PathVariable Long id) {
         try {
@@ -74,6 +106,10 @@ public class SessionController {
         }
     }
     
+    /**
+     * POST /api/sessions/{id}/resume
+     * Resumes a paused session.
+     */
     @PostMapping("/{id}/resume")
     public ResponseEntity<?> resumeSession(@PathVariable Long id) {
         try {
@@ -83,6 +119,11 @@ public class SessionController {
         }
     }
 
+    /**
+     * GET /api/sessions/current
+     * Checks if there is any active or paused session currently running.
+     * Useful for restoring state when the user refreshes the page.
+     */
     @GetMapping("/current")
     public ResponseEntity<Session> getCurrentSession(@AuthenticationPrincipal UserDetails userDetails) {
         User user = getUser(userDetails);
