@@ -45,7 +45,7 @@ export const usePomodoroTimer = (onTimerComplete) => {
 
     const getNextMode = useCallback((currentMode) => {
         if (currentMode.id === 'work') {
-            return completedPomodoros % 4 === 3 ? MODES.LONG_BREAK : MODES.SHORT_BREAK;
+            return (completedPomodoros > 0 && completedPomodoros % 4 === 0) ? MODES.LONG_BREAK : MODES.SHORT_BREAK;
         }
         return MODES.WORK;
     }, [completedPomodoros]);
